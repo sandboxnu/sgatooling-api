@@ -1,0 +1,107 @@
+{
+    "Members": [
+        {
+            "id": 1,
+            "nuid": "123456789",
+            "first_name": "Nathan",
+            "last_name": "Harvey",
+            "email": "sampleemail@northeastern.edu",
+            "active": false,
+            "can_vote": true,
+            "receive_email_notifs": true,
+            "include_in_quorum": false,
+            "receive_not_present_email": true,
+            "can_log_in": true
+        },
+        {
+            "id": 2,
+            "nuid": "123456789",
+            "first_name": "Dylan",
+            "last_name": "Cerenov",
+            "email": "sampleemail@northeastern.edu",
+            "active": false,
+            "can_vote": true,
+            "receive_email_notifs": true,
+            "include_in_quorum": true,
+            "receive_not_present_email": true,
+            "can_log_in": true
+        },
+        {
+            "id": 3,
+            "nuid": "123456789",
+            "first_name": "Matt",
+            "last_name": "C",
+            "email": "sampleemail@northeastern.edu",
+            "active": true,
+            "can_vote": true,
+            "receive_email_notifs": true,
+            "include_in_quorum": true,
+            "receive_not_present_email": true,
+            "can_log_in": true
+        }
+    ],
+    "Membership" : [
+        {
+            "membership_id" : 1,
+            "group_id": 1
+        },
+        {
+            "membership_id" : 2,
+            "group_id": 1
+        },
+        {
+            "membership_id" : 2,
+            "group_id": 2
+        },
+        {
+            "membership_id" : 3,
+            "group_id": 3
+        }
+    ],
+    "Group" : [
+        {
+            "id": 1,
+            "group_name": "Sandbox"
+        },
+        {
+            "id": 2,
+            "group_name": "Hawaii Club"
+        },
+        {
+            "id": 3,
+            "group_name": "SGA"
+        }
+
+    ],
+    "AttendanceChangeRequest" :[
+
+    ],
+    "Report": [
+
+    ],
+    "AttendanceRecord": [
+
+    ],
+    "Events": [
+        {
+            "id": 0,
+            "event_name": "Sample_Event",
+            "groups_called": ["Senate"],
+            "start_time" : "December 20 1998",
+            "end_time" : "December 21 1998",
+            "sign_in_closed" : true
+        }
+
+    ],
+    "Attendance-changes": [
+        {
+            "id": 1,
+            "name": "...",
+            "time_submitted": "2022-10-16",
+            "time_leaving": "2022-10-17"
+        }
+
+    ]
+    
+    
+}
