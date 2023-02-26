@@ -9,6 +9,7 @@ app.use(express.json())
 app.get("/members", (req, res) => {
     console.log(req.query);
 
+    //in the try check what the query is, and if its not what we expect return an error:
 
     function filtersearches() {
         const list = localDb["Members"];
@@ -23,10 +24,6 @@ app.get("/members", (req, res) => {
 
             const Membership = localDb["Membership"]
 
-            //TODO: make this a filter
-            //const memberids = Membership.filter(membership => membership.group_id == group[0].id)
-            //console.log(memberids)
-            //this just brings me back a list of items which is not entirely what I want, i just want the index
             const memberids = []
             
             for (const index in localDb["Membership"]) {
@@ -42,7 +39,7 @@ app.get("/members", (req, res) => {
         }
 
         if(req.query.hasOwnProperty("active")) {
-            const found = copy.filter(members => members["active"] == true)
+            const found = copy.filter(members => members["active"] === true)
             if(found.length != 0) {
                 copy = found;
             } else {
@@ -54,7 +51,7 @@ app.get("/members", (req, res) => {
 
         //make this a member type:
         if(req.query.hasOwnProperty("include-in-quorum")) {
-            const found = copy.filter(members => members["include_in_quorum"] == true)
+            const found = copy.filter(members => members["include_in_quorum"] === true)
             if(found.length != 0) {
                 copy = found;
             }else {
@@ -63,6 +60,7 @@ app.get("/members", (req, res) => {
             }
         }
 
+        //currently if the string is malformed/bad request it still gets all of them
         return copy;
     }
 
@@ -93,8 +91,8 @@ app.post("/members", (req, res) => {
 
 
 app.get("/members/:id", (req, res) => {
-    //is it always assumed that data will be in order of id number?
-    const member = localDb["Members"][parseInt(req.params.id) - 1]
+    //dont' have to assume that the code is sorted
+    const member = localDb["Members"][parseInt(req.params.id)]
     res.send(member)
 })
 
