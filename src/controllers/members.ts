@@ -1,26 +1,91 @@
 import { Member } from "../types/member.js";
-import localDb from "../example_data.json"
-//maybe want to return back specific errors?
+import localDb from "../local_db.js"
 
 class MembersController {
-    //methods necessary create a new member
-    getMembers(): Member[] {
-        const members = localDb["Members"]
-        return members
+    getAllMembers(){
+        return localDb["Members"];
     }
-    /*
-    createMember(): Member {
-        //if successful get back something, or undefined, so throw an error
-        //validation checks:
+
+    //get all members from a particular set within a particular group 
+    getGroupMembers(suppliedGroup:string, members: Member[]): Member[] {
+        const groups = localDb["Group"]
+            
+        let groupid : Number;
+        for (const group of groups) {
+            if(group.group_name === suppliedGroup) {
+                groupid = group.id
+            }
+        }
+
+        const Membership = localDb["Membership"]
+        const memberids = [];
+        for (const membership of Membership) {
+            if(membership["group_id"] == groupid) {
+                memberids.push(membership.membership_id)
+            }
+        }
+
+        const found = members.filter( member => memberids.includes(member.id))
+        if(found){
+            return found;
+        } else {
+            //throw an error here
+        }
+    }
+
+    //get all quorum members based on a particular set
+    getQuorumMembers(members: Member[]):Member[]  {
+        const found = members.filter(members => members["include_in_quorum"] === true)
+        if(found.length != 0) {
+            return members
+        }else {
+            //throw an error
+        }
+    }
+
+    //get only active members, based on a particular set of members
+    getActiveMembers(members: Member[]):Member[] {
+        const found = members.filter(members => members["active"] === true)
+        if(found.length != 0) {
+            return members
+        } else {
+            //throw and error
+        }
+    }
 
 
+    createMember(bodyData) :Member {
+        const newId = localDb["Members"].length + 1;
+        const newMember : Member = {
+            id: newId,
+            nuid: bodyData.nuid,
+            first_name: bodyData.first_name,
+            last_name: bodyData.last_name,
+            email: bodyData.email,
+            active: bodyData.active,
+            can_vote: bodyData.voting_rights,
+            receive_email_notifs: bodyData.recieve_email_notifs,
+            include_in_quorum: bodyData.include_in_quorum,
+            receive_not_present_email: bodyData.receive_not_present_email,
+            can_log_in: bodyData.sign_in_blocked,
+        }
+        
+        localDb["Members"].push(newMember)
+        return newMember;
     }
-    */
    
     //get a member based on id
     getMember(id: number): Member | undefined {
-        const members = localDb["Members"][id]
-        return members
+        const members = localDb["Members"]
+        if(id > members.length || id < 0) {
+            //throw an error or maybe return undefined?
+        }
+
+        for (const member of members) {
+            if(member.id === id) {
+                return member;
+            }
+        }
     }    
 
 
