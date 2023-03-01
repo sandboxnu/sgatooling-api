@@ -3,7 +3,7 @@ import localDb from "../example_data.json";
 class MembersController {
     //methods necessary create a new member
     getMembers() {
-        const members = localDb["members"];
+        const members = localDb["Members"];
         return members;
     }
     /*
@@ -16,7 +16,7 @@ class MembersController {
     */
     //get a member based on id
     getMember(id) {
-        const members = localDb["members"][id];
+        const members = localDb["Members"][id];
         return members;
     }
 }

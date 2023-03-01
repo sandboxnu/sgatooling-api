@@ -1,8 +1,51 @@
 import express, {Express, Request, Response} from "express";
-import localDb from "./local_db.js"
+// import localDb from "./local_db.js"
 import { Member } from "./types/member.js";
+import dotenv from 'dotenv';
+import mysql from 'mysql';
+
+dotenv.config();
+
+// dotenv.config({path:'../.env'})
+
+
 const PORT = 8080;
 const app = express();
+
+// const mysql = require('mysql');
+
+
+
+console.log(process.env.DB_HOST);
+
+const connection = mysql.createConnection({
+    host: process.env.DB_HOST,
+    username: process.env.DB_USER,
+    password: process.env.DB_PASS,
+    port: process.env.DB_PORT,
+    database: process.env.DB_NAME
+});
+
+connection.connect(function(err) {
+    console.log("trying to connect")
+    if (err) throw err;
+    console.log("Connected!");
+});
+  
+
+connection.query('SELECT', (err, rows, fields) => {
+    if (err) throw err
+
+    console.log('The solution is: ', rows[0].solution)
+})
+
+
+
+
+
+
+
+/*
 
 app.use(express.json())
 
@@ -98,3 +141,8 @@ app.get("/members/:id", (req, res) => {
 
 
 app.listen(PORT, () => console.log(`Local Host is running on PORT: ${PORT}`))
+
+*/
+
+
+connection.end();
