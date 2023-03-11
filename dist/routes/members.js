@@ -1,37 +1,45 @@
 import express from "express";
 import MembersController from "../controllers/members.js";
+import { getMembers } from "../database.js";
 import Joi from "joi";
 const membersRouter = express.Router();
 const membersControllers = new MembersController();
 membersRouter.get("/", (req, res) => {
     //error handling for when we have some random inputs coming in
     //honestly not sure how to make an easy way to do this...
+    console.log(req.query);
+    const members = getMembers(req.query);
+    console.log(members);
+    /*
+
     let members = membersControllers.getAllMembers();
-    if (req.query.hasOwnProperty("group")) {
+
+    if(req.query.hasOwnProperty("group")) {
         try {
-            const group = req.query.group;
-            members = membersControllers.getGroupMembers(group, members);
-        }
-        catch (error) {
+            const group = req.query.group as string;
+            members = membersControllers.getGroupMembers(group, members)
+        } catch(error) {
             //do something later
         }
     }
-    if (req.query.hasOwnProperty("active")) {
+
+    if(req.query.hasOwnProperty("active")) {
         try {
             members = membersControllers.getActiveMembers(members);
-        }
-        catch (error) {
+        } catch(error) {
             //do something later
         }
     }
-    if (req.query.hasOwnProperty("include-in-quorum")) {
+
+    if(req.query.hasOwnProperty("include-in-quorum")) {
         try {
+            console.log("made it here")
             members = membersControllers.getQuorumMembers(members);
-        }
-        catch (error) {
+        } catch(error ) {
             //do something later
         }
     }
+    */
     res.send(members);
 });
 membersRouter.post("/", (req, res) => {

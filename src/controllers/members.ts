@@ -1,6 +1,5 @@
 import { Member } from "../types/member.js";
 import localDb from "../local_db.js"
-
 class MembersController {
     getAllMembers(){
         return localDb["Members"];
