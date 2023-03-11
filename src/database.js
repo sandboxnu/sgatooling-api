@@ -71,11 +71,11 @@ export async function createMember(bodyData) {
     bodyData.last_name,
     bodyData.email,
     bodyData.active,
-    bodyData.voting_rights,
-    bodyData.recieve_email_notifs,
+    bodyData.can_vote,
+    bodyData.receive_email_notifs,
     bodyData.include_in_quorum,
     bodyData.receive_not_present_email,
-    bodyData.sign_in_blocked])
+    bodyData.can_log_in])
 
     console.log(result)
 
