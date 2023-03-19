@@ -15,16 +15,8 @@ export async function getAllMembers () {
 }
 
 export async function getSpecificGroup (urlArgs){
-    //whats currently in the database is a little of with the ER diagram btw
-    let initialString = `SELECT uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked
-    FROM Member JOIN MemberGroup M on Member.uuid = M.person_id `
-
-    for(let i = 0; i < urlArgs.length; i ++) {
-        console.log(urlArgs[i])
-    }
-
-    //only group: New Senators Fall 2022
-    //query for that: members?group=New%20Senators%20Fall%202022
+    let initialString = `SELECT member_id, nuid,  first_name, last_name, email,  s_active, can_vote, receive_email_notifs, include_in_quorum, recieve_not_present_email,can_log_in
+    FROM Members JOIN Membership M on Members.id = M.member_id JOIN \`Group\` G on M.group_id = G.id `
 
     let data;
     let index = 0
@@ -35,12 +27,12 @@ export async function getSpecificGroup (urlArgs){
        }
 
        if(item === 'group') {
-        queryString += 'membership_group = ?'
+        queryString += 'group_name = ?'
         data = [urlArgs[item]]
        }
 
        if(item === 'active') {
-        queryString += 'active_member'
+        queryString += 's_active'
        }
 
        if(item === 'include-in-quorum') {
@@ -62,7 +54,7 @@ export async function getSpecificGroup (urlArgs){
 }
 
 export async function getMember(id) {
-    const [memberInfo] = await pool.query(`SELECT * FROM Members WHERE uuid = ?`, [id])
+    const [memberInfo] = await pool.query(`SELECT * FROM Members WHERE id = ?`, [id])
     return memberInfo
 }
 
@@ -90,42 +82,6 @@ export async function createMember(bodyData) {
     const member = await getMember(id)
     return member
 } 
-
-//going to split this up later
-//const [result] = await pool.query("SELECT * FROM AttendanceRecord")
-
-//table names: Report
-//AttendanceChangeRequest
-//AttendanceRecord
-//Event
-export async function getAttendanceChange() {
-    //think i'm missing arrive_time
-    const [result] = await pool.query("SELECT uuid, name, time_submitted, date_of_change, type, change_status, reason, time_leaving FROM AttendanceChangeRequest")
-    return result
-}
-
-//idkif these are all supposed to be possible in the query string
-export async function getAttendanceChangeLimit(limit) {
-
-}
-
-export async function getAttendanceChangeMember(memberid) {
-
-}
-
-export async function getAttendanceChangeEvent(eventid) {
-
-}
-
-export async function getSpecificAttendance(id) {
-
-}
-
-export async function createAttendanceChange(reqBody) {
-    //how should we handle optional arguments that come in? 
-}
-
-
 
 /*
 const testData = {
