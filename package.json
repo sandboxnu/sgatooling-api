@@ -8,8 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "rimraf dist && npx tsc",
     "prestart": "npm run build",
-    "start": "node dist/index.js",
-    "dev": "npx tsc -w & nodemon dist/index.js"
+    "start": "node src/index.ts",
+    "dev": "npx tsc -w & ts-node-esm src/index.ts"
   },
   "keywords": [],
   "author": "",
@@ -23,6 +23,7 @@
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
     "joi": "^17.8.3",
+    "mysql2": "^3.2.0",
     "rimraf": "^4.1.2",
     "typescript": "^4.9.5"
   }
