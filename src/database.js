@@ -4,15 +4,13 @@ dotenv.config()
 
 const pool = mysql.createPool ({
     host: process.env.DB_HOST,
-    //port: process.env.MYSQL_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME
 }).promise()
 
 export async function getAllMembers () {
-    //SELECT uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked FROM Member
-    const [result] = await pool.query("SELECT uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked FROM Member")
+    const [result] = await pool.query("SELECT * FROM Member")
     return result
 }
 
