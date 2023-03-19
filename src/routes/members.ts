@@ -1,29 +1,47 @@
 import express from "express";
-import {getAllMembers, getSpecificGroup, getMember, createMember} from "../database.js"
+import MembersController from "../controllers/members.js";
 import Joi from "joi";
 
 const membersRouter = express.Router();
 
-membersRouter.get("/", async (req, res) => {
-    //check to make sure that we have actual value within our struct
-    //also very fun, errors in sql completely crash the api so yeah need to try catch those
-    let members
-    //just copied this off stack exchange...
-    const isEmpty = (obj) => {
-        for (var x in obj) {return false}
-        return true
+const membersControllers = new MembersController();
+
+membersRouter.get("/", (req, res) => {
+    //error handling for when we have some random inputs coming in
+    //honestly not sure how to make an easy way to do this...
+
+
+    let members = membersControllers.getAllMembers();
+
+    if(req.query.hasOwnProperty("group")) {
+        try {
+            const group = req.query.group as string;
+            members = membersControllers.getGroupMembers(group, members)
+        } catch(error) {
+            //do something later
+        }
     }
-    
-    if(isEmpty(req.query)) {
-        members = await getAllMembers()
-    } else {
-        members = await getSpecificGroup(req.query)
+
+    if(req.query.hasOwnProperty("active")) {
+        try {
+            members = membersControllers.getActiveMembers(members);
+        } catch(error) {
+            //do something later
+        }
+    }
+
+    if(req.query.hasOwnProperty("include-in-quorum")) {
+        try {
+            members = membersControllers.getQuorumMembers(members);
+        } catch(error ) {
+            //do something later
+        }
     }
 
     res.send(members);
 });
 
-membersRouter.post("/", async (req, res) => {
+membersRouter.post("/", (req, res) => {
     //schema to enforce the types that we need and the requirements that we need
     const schema = Joi.object({
         nuid: Joi.string().required(),
@@ -40,20 +58,22 @@ membersRouter.post("/", async (req, res) => {
 
     const result = schema.validate(req.body);
     if(result.error) {
-        res.status(405).send(result.error.details[0].message)
+        res.status(405).send("Invalid Input")
         return;
     }
 
-    //idk why but theres some bugs with this createMember Route where although the fields come in as a boolean, the values in the database are null,
-
-    const newMember = await createMember(req.body)
+    const newMember = membersControllers.createMember(req.body)
     res.send(newMember)
 });
 
 
-membersRouter.get("/:id", async (req, res) => {
-    const member = await getMember(req.params.id);
-    res.send(member)
+membersRouter.get("/:id", (req, res) => {
+    try {
+        const member = membersControllers.getMember(parseInt(req.params.id));
+        res.send(member)
+    } catch(error) {
+        //throw an error and bad status code
+    }
 });
 
 export {membersRouter};
