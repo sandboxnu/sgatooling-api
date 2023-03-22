@@ -14,6 +14,7 @@ export const isEmpty = (obj) => {
   return true;
 };
 
+//is this enough to cause some change?
 membersRouter.get("/", async (req, res) => {
   //initial queries that are not supported -> 500 error
   let members;
