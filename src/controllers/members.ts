@@ -6,7 +6,6 @@ import { Member } from "../types/member.js";
 export const pool = mysql2
   .createPool({
     host: process.env.DB_HOST,
-    //port: process.env.MYSQL_PORT,
     user: process.env.DB_USER,
     password: process.env.DB_PASS,
     database: process.env.DB_NAME,
@@ -15,11 +14,10 @@ export const pool = mysql2
 
 class MembersController {
   async getAllMembers() {
-    const [result] = await pool.query(
-      "SELECT uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked FROM Member"
-    );
+    "SELECT uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked FROM Member";
+    const [result] = await pool.query("SELECT * FROM Member");
 
-    const members: Member[] = Object.keys(result).map((elem) => {
+    const members = Object.keys(result).map((elem) => {
       return {
         id: 0,
         nuid: result[elem].uuid,
@@ -87,7 +85,7 @@ class MembersController {
     const [result] = await pool.query(
       `
     INSERT INTO Member (uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked)
-    VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?)`,
+    VALUES (?, ?, ?, ?, ? , ?, ?, ?, ?) `,
       [
         bodyData.nuid,
         bodyData.first_name,
@@ -101,9 +99,7 @@ class MembersController {
       ]
     );
 
-    //this is a big buggy not sure if its a post issue on my end
-    //const id = result["insertId"];
-    //const member = await this.getMember(id);
+    console.log(result);
 
     const member = await pool.query(`SELECT * FROM Member WHERE uuid = ?`, [
       bodyData.nuid,

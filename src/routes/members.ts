@@ -29,7 +29,7 @@ membersRouter.get("/", async (req, res) => {
       res.status(404).send("Member Not Found");
       return;
     }
-    res.send(members);
+    res.status(200).send(members);
   } catch (error: unknown) {
     res.status(500).send("Database Error");
   }
@@ -53,8 +53,12 @@ membersRouter.post("/", async (req, res) => {
   if (result.error) {
     res.status(405).send("Invalid Input");
   } else {
-    const newMember = await membersController.createMember(req.body);
-    res.send(newMember);
+    try {
+      const newMember = await membersController.createMember(req.body);
+      res.status(200).send(newMember);
+    } catch (error: unknown) {
+      res.status(500).send("Database error");
+    }
   }
 });
 
@@ -64,7 +68,7 @@ membersRouter.get("/:id", async (req, res) => {
     res.status(404).send("Member Not Found");
     return;
   }
-  res.send(member);
+  res.status(200).send(member);
 });
 
 export { membersRouter };
