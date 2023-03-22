@@ -6,26 +6,26 @@ import { Event } from "../types/eventType.js"
 
 class EventsRepository {
 
-    // Gets the list of all the events 
-    getAllEvents(): Event[] {
-        // borderline pseudocode that gets the events from the database.
-        const eventsMap = localDb["events"];
-    
-        const events: Event[] = [];
-        for (const id in eventsMap) {
-          events.push(eventsMap[id]);
-        }
-    
-        return events;
+  // Gets the list of all the events 
+  getAllEvents(): Event[] {
+    // borderline pseudocode that gets the events from the database.
+    const eventsMap = localDb["events"];
+
+    const events: Event[] = [];
+    for (const id in eventsMap) {
+      events.push(eventsMap[id]);
     }
 
-    getEvent(id: string): Event | undefined {
-        // borderline pseudocode that gets the events from the database. 
-        const eventsMap = localDb["players"];
-    
-        const event = eventsMap[id];
-        return event;
-    }
+    return events;
+  }
+
+  getEvent(id: string): Event | undefined {
+    // borderline pseudocode that gets the events from the database. 
+    const eventsMap = localDb["players"];
+
+    const event = eventsMap[id];
+    return event;
+  }
 }
 
 export default EventsRepository; 
