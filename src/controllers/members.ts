@@ -14,25 +14,9 @@ export const pool = mysql2
 
 class MembersController {
   async getAllMembers() {
-    "SELECT uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked FROM Member";
-    const [result] = await pool.query("SELECT * FROM Member");
-
-    const members = Object.keys(result).map((elem) => {
-      return {
-        id: 0,
-        nuid: result[elem].uuid,
-        first_name: result[elem].first_name,
-        last_name: result[elem].last_name,
-        email: result[elem].email,
-        active: result[elem].active,
-        can_vote: result[elem].can_vote,
-        receive_email_notifs: true,
-        include_in_quorum: result[elem].include_in_quorum,
-        receive_not_present_email: result[elem].receive_not_present_email,
-        can_log_in: result[elem].can_log_in,
-      };
-    });
-    console.log(members);
+    const [result] = await pool.query(
+      "SELECT uuid, first_name, last_name, email, active_member, voting_rights, include_in_quorum, receive_not_present_email, sign_in_blocked FROM Member"
+    );
     return result;
   }
 
