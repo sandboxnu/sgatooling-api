@@ -7,10 +7,12 @@ import { Attendance } from "../types/attendanceType.js";
 const attendanceRepository = new AttendanceRepository(); 
 
 class AttendanceController {
+  // GET all attendance changes 
   getAllAttendanceChanges(): Attendance[] {
     return attendanceRepository.getAllAttendanceChanges();
   }
 
+  // GET specific attendance change 
   getAttendanceChange(id: string) : Attendance {
     const attendanceChange = attendanceRepository.getAttendanceChange(id); 
 
@@ -21,9 +23,10 @@ class AttendanceController {
     return attendanceChange; 
   }
 
+  // POST attendance information to the DB 
   postAttendanceChange(Attendance attendance) {
-
-  }
+    attendanceRepository.postAttendanceChange(attendance); 
+  } 
 }
 
 export default AttendanceController; 
