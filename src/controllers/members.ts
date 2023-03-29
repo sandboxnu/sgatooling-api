@@ -2,6 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import * as mysql2 from "mysql2";
 import { Member } from "../types/member.js";
+import { isEmpty } from "../routes/members.js";
 
 export const pool = mysql2
   .createPool({
@@ -58,11 +59,7 @@ class MembersController {
       [result] = await pool.query(totalString);
     }
 
-    if (Object.keys(result).length === 0) {
-      return null;
-    }
-
-    return result;
+    return isEmpty(result) ? null : result;
   }
 
   async createMember(bodyData) {
@@ -88,6 +85,7 @@ class MembersController {
     const member = await pool.query(`SELECT * FROM Member WHERE uuid = ?`, [
       bodyData.nuid,
     ]);
+
     return member;
   }
 
@@ -96,10 +94,7 @@ class MembersController {
       `SELECT * FROM Member WHERE uuid = ?`,
       [id]
     );
-    if (Object.keys(memberInfo).length === 0) {
-      return null;
-    }
-    return memberInfo;
+    return isEmpty(memberInfo) ? null : memberInfo;
   }
 }
 
