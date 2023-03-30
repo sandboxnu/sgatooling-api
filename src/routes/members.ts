@@ -4,76 +4,71 @@ import Joi from "joi";
 
 const membersRouter = express.Router();
 
-const membersControllers = new MembersController();
+const membersController = new MembersController();
 
-membersRouter.get("/", (req, res) => {
-    //error handling for when we have some random inputs coming in
-    //honestly not sure how to make an easy way to do this...
+//method for determining whether an incoming json is empty
+export const isEmpty = (obj) => {
+  for (var x in obj) {
+    return false;
+  }
+  return true;
+};
 
-
-    let members = membersControllers.getAllMembers();
-
-    if(req.query.hasOwnProperty("group")) {
-        try {
-            const group = req.query.group as string;
-            members = membersControllers.getGroupMembers(group, members)
-        } catch(error) {
-            //do something later
-        }
+//is this enough to cause some change?
+membersRouter.get("/", async (req, res) => {
+  //initial queries that are not supported -> 500 error
+  let members;
+  try {
+    if (isEmpty(req.query)) {
+      members = await membersController.getAllMembers();
+    } else {
+      members = await membersController.getSpecificGroup(req.query);
     }
-
-    if(req.query.hasOwnProperty("active")) {
-        try {
-            members = membersControllers.getActiveMembers(members);
-        } catch(error) {
-            //do something later
-        }
+    if (!members) {
+      //can't do res.send twice so must exit the route
+      res.status(404).send("Member Not Found");
+      return;
     }
-
-    if(req.query.hasOwnProperty("include-in-quorum")) {
-        try {
-            members = membersControllers.getQuorumMembers(members);
-        } catch(error ) {
-            //do something later
-        }
-    }
-
-    res.send(members);
+    res.status(200).send(members);
+  } catch (error: unknown) {
+    res.status(500).send("Database Error");
+  }
 });
 
-membersRouter.post("/", (req, res) => {
-    //schema to enforce the types that we need and the requirements that we need
-    const schema = Joi.object({
-        nuid: Joi.string().required(),
-        first_name: Joi.string().required(),
-        last_name: Joi.string().required(),
-        email: Joi.string().required(),
-        active: Joi.boolean().required(),
-        can_vote: Joi.boolean().required(),
-        receive_email_notifs: Joi.boolean().required(),
-        include_in_quorum: Joi.boolean().required(),
-        receive_not_present_email: Joi.boolean().required(),
-        can_log_in: Joi.boolean().required(),
-    })
+membersRouter.post("/", async (req, res) => {
+  //schema to enforce the types that we need and the requirements that we need
+  const schema = Joi.object({
+    nuid: Joi.string().required(),
+    first_name: Joi.string().required(),
+    last_name: Joi.string().required(),
+    email: Joi.string().required(),
+    active: Joi.boolean().required(),
+    can_vote: Joi.boolean().required(),
+    include_in_quorum: Joi.boolean().required(),
+    receive_not_present_email: Joi.boolean().required(),
+    can_log_in: Joi.boolean().required(),
+  });
 
-    const result = schema.validate(req.body);
-    if(result.error) {
-        res.status(405).send("Invalid Input")
-        return;
-    }
-
-    const newMember = membersControllers.createMember(req.body)
-    res.send(newMember)
-});
-
-
-membersRouter.get("/:id", (req, res) => {
+  const result = schema.validate(req.body);
+  if (result.error) {
+    res.status(405).send("Invalid Input");
+  } else {
     try {
-        const member = membersControllers.getMember(parseInt(req.params.id));
-        res.send(member)
-    } catch(error) {
-        //throw an error and bad status code
+      const newMember = await membersController.createMember(req.body);
+      res.status(200).send(newMember);
+    } catch (error: unknown) {
+      res.status(500).send("Database error");
     }
+  }
 });
 
-export {membersRouter};
+membersRouter.get("/:id", async (req, res) => {
+  const member = await membersController.getMember(req.params.id);
+  if (!member) {
+    res.status(404).send("Member Not Found");
+    return;
+  }
+  res.status(200).send(member);
+});
+
+export { membersRouter };
