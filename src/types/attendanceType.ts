@@ -1,12 +1,12 @@
 // Attendance Type
-// Interface for attendance 
+// Interface for attendance
 export interface Attendance {
-  name: string,
-  time_submitted: date,
-  date_of_change: date,
-  type: string,
-  change_status: string,
-  reason: string,
-  time_arriving: date,
-  time_leaving: date
+  name: string;
+  time_submitted: Date;
+  date_of_change: Date;
+  type: string;
+  change_status: string;
+  reason: string;
+  time_arriving: Date;
+  time_leaving: Date;
 }

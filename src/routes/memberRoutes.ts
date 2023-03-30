@@ -1,5 +1,5 @@
 import express from "express";
-import MembersController from "../controllers/members.js";
+import MembersController from "../controllers/memberController.js";
 import Joi from "joi";
 
 const membersRouter = express.Router();
