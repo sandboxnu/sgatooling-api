@@ -25,6 +25,4 @@ app.use("/", (_req, res) => {
   res.status(404).send("Endpoint does not exist.");
 });
 
-app.use("/attendance-changes", attendanceRouter);
-
 app.listen(PORT, () => console.log(`Local Host is running on PORT: ${PORT}`))
