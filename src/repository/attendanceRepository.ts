@@ -20,6 +20,8 @@ class AttendanceRepository {
     const attendanceMap = localDb["attendance"];
     const attendance = attendanceMap[id];
     return attendance;
+
+    //if array includes: limit ->
   }
 
   // POST attendance information to the DB

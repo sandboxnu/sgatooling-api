@@ -12,9 +12,6 @@ import { pool } from "../controllers/memberController.js";
 class EventsRepository {
   // Gets the list of all the events
   async getAllEvents() {
-    const [result] = await pool.query("SELECT * FROM Event");
-
-    return result;
   }
 
   getEvent(id: string): Event | undefined {

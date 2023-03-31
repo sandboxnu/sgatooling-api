@@ -2,6 +2,7 @@
 import express from "express";
 import { membersRouter } from "./routes/memberRoutes.js";
 import { eventRouter } from "../src/routes/eventRoutes.js";
+import { attendanceRouter } from "./routes/attendanceRoutes.js";
 
 /*
 const attendances = require("./routes/attendanceRoutes.js");
@@ -19,9 +20,8 @@ app.use("/members", membersRouter);
 
 app.use("/events", eventRouter);
 // Attendance routes
-/*
-app.use("/attendance-changes", attendances);
-*/
+
+app.use("/attendance-changes", attendanceRouter);
 
 // Base route
 app.use("/", (_req, res) => {
