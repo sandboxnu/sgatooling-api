@@ -48,12 +48,12 @@ export { attendanceRouter };
 
 //req type:
 
- {
-		uuid: "John Doe",
-		type: "late",
-		change_status: "under review",
-		reason: "family emergency",
-		time_arriving: 2022-10-31 07:30:00,
-		time_leaving: 2022-10-31 08:00:00
-	}
+{"uuid":"02623027b2d379be85ff0ac2dc2feeef",
+"name":"Jenny Kim",
+"time_submitted":"2022-11-22 11:50:50",
+"date_of_change":"2022-11-28 00:00:00",
+"type":"absent",
+"change_status":"excused",
+"reason":" Hello test1 from seank"
+}
 */
