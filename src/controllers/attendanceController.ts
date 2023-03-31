@@ -1,11 +1,8 @@
 // Controller class for the Attendance API endpoints
 
 import HTTPError from "../errors/HTTPError.js";
-import AttendanceRepository from "../repository/attendanceRepository.js";
 import { Attendance } from "../types/attendanceType.js";
 import { pool } from "../controllers/memberController.js";
-
-const attendanceRepository = new AttendanceRepository();
 
 class AttendanceController {
   // GET all attendance changes

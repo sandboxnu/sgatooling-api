@@ -3,10 +3,7 @@
 
 // are these imports supposed to have .js extension?
 import HTTPError from "../errors/HTTPError.js";
-import EventsRepository from "../repository/eventRepository.js";
 import { pool } from "../controllers/memberController.js";
-
-const eventsRepository = new EventsRepository();
 
 class EventsController {
   async getAllEvents() {

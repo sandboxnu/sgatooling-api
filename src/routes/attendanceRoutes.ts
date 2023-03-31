@@ -15,7 +15,7 @@ attendanceRouter.get("/", async (req, res, next) => {
   if (isEmpty(req.query)) {
     people = await attendanceController.getAllAttendanceChanges();
   } else {
-    people = await attendanceController.getAttendanceChange(req.query);
+    people = await attendanceController.getSpecificAttendanceChange(req.query);
   }
   res.send(people);
 });
