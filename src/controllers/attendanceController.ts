@@ -1,6 +1,4 @@
 // Controller class for the Attendance API endpoints
-
-import HTTPError from "../errors/HTTPError.js";
 import { Attendance } from "../types/attendanceType.js";
 import { pool } from "../controllers/memberController.js";
 
@@ -30,6 +28,28 @@ class AttendanceController {
 
   //for some reason the events in there isn't any events on those with requests, may ask Chanmi about if this is correct
   async getSpecificAttendanceChange(urlArgs) {
+
+    // Check for all the keys, any key provided must be one of the following: 
+    // - `limit=n`- get the `n` most recent `AttendanceChange` requests
+    // `memberId=id`- gets the records associated with the `Member` with ID `id`
+    // `event=eventID` - gets the records associated with the `Event` with ID `eventID`
+    // If not, then we throw an error 500 
+
+    // ayo go thru each arg
+    // if the arg is one of the three, then dont throw and error
+    // otherwise you do 
+
+    for (let i = 0; i < Object.keys(urlArgs).length; i++) {
+      let currentKey = Object.keys(urlArgs)[i];
+      if (currentKey === "memberID" || currentKey === "eventID" || currentKey === "limit") {
+        // then we are ok 
+      }
+      else {
+        // unsupported parameter
+        return null; 
+      }
+    }
+
     //need the on clauses otherwise does a cartesian product which is great :))))))))
     let SELECT = " SELECT * ";
     let FROM = " FROM AttendanceChangeRequest ACR";

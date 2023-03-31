@@ -2,7 +2,6 @@
 // The controller has a class and method that call the repository.
 
 // are these imports supposed to have .js extension?
-import HTTPError from "../errors/HTTPError.js";
 import { pool } from "../controllers/memberController.js";
 
 class EventsController {
