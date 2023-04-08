@@ -11,18 +11,14 @@ const attendanceController = new AttendanceController();
 
 /* GET all attendance changes */
 attendanceRouter.get("/", async (req, res) => {
-  let people;
-  if (isEmpty(req.query)) {
-    people = await attendanceController.getAllAttendanceChanges();
-  } else {
-    people = await attendanceController.getSpecificAttendanceChange(req.query);
+  try {
+    const people = await attendanceController.getSpecificAttendanceChange(
+      req.query
+    );
+    res.status(200).send(people);
+  } catch (error: unknown) {
+    res.status(500).send("Database Error");
   }
-
-  if (!people) {
-    res.status(500).send("Database error"); 
-    return;
-  }
-  res.send(people);
 });
 
 /* GET attendance change for specific id */
@@ -34,18 +30,19 @@ attendanceRouter.get("/:attendanceId", async (req, res, next) => {
     );
     res.status(200).json(attendance);
   } catch (err: unknown) {
-    res.status(500).send("Database Error"); 
+    res.status(500).send("Database Error");
   }
 });
 
 /* POST attendance change */
 attendanceRouter.post("/", async (req, res) => {
   try {
-  const insertedItem = await attendanceController.postAttendanceChange(req.body);
-  res.status(200).send(insertedItem);
-  }
-  catch (error: unknown) {
-    res.status(500).send("Database Error"); 
+    const insertedItem = await attendanceController.postAttendanceChange(
+      req.body
+    );
+    res.status(200).send(insertedItem);
+  } catch (error: unknown) {
+    res.status(500).send("Database Error");
   }
 });
 

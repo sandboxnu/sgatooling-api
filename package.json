@@ -9,7 +9,7 @@
     "build": "rimraf dist && npx tsc",
     "prestart": "npm run build",
     "start": "node src/index.ts",
-    "dev": "npx tsc -w & ts-node-esm src/index.ts"
+    "dev": "ts-node-esm src/index.ts"
   },
   "keywords": [],
   "author": "",
