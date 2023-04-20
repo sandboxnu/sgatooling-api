@@ -33,7 +33,7 @@ class AttendanceController {
     const validParams = new Map([
       ["eventID", "event_id = ?"],
       ["memberID", "person_uuid = ?"],
-      ["limit", " LIMIT ?"],
+      ["limit", "LIMIT ?"],
     ]);
 
     for (let i = 0; i < Object.keys(urlArgs).length; i++) {
@@ -42,17 +42,7 @@ class AttendanceController {
         throw new Error("unsupported Key");
       }
 
-      if (currentKey === "eventID") {
-        if (WHERE) {
-          WHERE += " AND " + validParams.get(currentKey);
-        } else {
-          JOIN += " JOIN Report R on R.request_id = ACR.uuid";
-          WHERE += " WHERE " + validParams.get(currentKey);
-        }
-        data.push(urlArgs[currentKey]);
-      }
-
-      if (currentKey === "memberID") {
+      if (validParams.has(currentKey) && currentKey != "limit") {
         if (WHERE) {
           WHERE += " AND " + validParams.get(currentKey);
         } else {
@@ -64,11 +54,12 @@ class AttendanceController {
     }
 
     if (urlArgs.hasOwnProperty("limit")) {
-      LIMIT += validParams.get("limit");
+      LIMIT += " LIMIT ?";
       data.push(parseInt(urlArgs["limit"]));
     }
 
     const totalQuery = SELECT + FROM + JOIN + WHERE + LIMIT;
+    console.log(totalQuery);
     const [result] = await pool.query(totalQuery, data);
     return [result];
   }
