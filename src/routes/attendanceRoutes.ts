@@ -28,7 +28,7 @@ attendanceRouter.get("/:attendanceId", async (req, res, next) => {
     const attendance = await attendanceController.getAttendanceChange(
       attendanceId
     );
-    res.status(200).json(attendance);
+    res.status(200).send(attendance);
   } catch (err: unknown) {
     res.status(500).send("Database Error");
   }
