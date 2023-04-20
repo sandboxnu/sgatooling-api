@@ -44,7 +44,7 @@ class AttendanceController {
 
       if (currentKey === "eventID") {
         if (WHERE) {
-          WHERE += " AND event_id = ?";
+          WHERE += " AND " + validParams.get(currentKey);
         } else {
           JOIN += " JOIN Report R on R.request_id = ACR.uuid";
           WHERE += " WHERE " + validParams.get(currentKey);
@@ -54,7 +54,7 @@ class AttendanceController {
 
       if (currentKey === "memberID") {
         if (WHERE) {
-          WHERE += " AND person_uuid = ?";
+          WHERE += " AND " + validParams.get(currentKey);
         } else {
           JOIN += " JOIN Report R on R.request_id = ACR.uuid";
           WHERE += " WHERE " + validParams.get(currentKey);
