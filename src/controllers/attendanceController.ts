@@ -59,7 +59,6 @@ class AttendanceController {
     }
 
     const totalQuery = SELECT + FROM + JOIN + WHERE + LIMIT;
-    console.log(totalQuery);
     const [result] = await pool.query(totalQuery, data);
     return [result];
   }
