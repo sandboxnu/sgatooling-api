@@ -30,7 +30,6 @@ class AttendanceController {
       return this.getAllAttendanceChanges();
     }
 
-    //need values from only from AttendanceChangeRequests:
     let SELECT =
       " SELECT name, time_submitted, date_of_change, type, change_status, reason, time_arriving, time_leaving";
     let FROM = " FROM AttendanceChangeRequest ACR";
@@ -39,33 +38,24 @@ class AttendanceController {
     let LIMIT = "";
     let data = [];
 
+    const validParams = new Map([
+      ["eventID", "event_id = ?"],
+      ["memberID", "person_uuid = ?"],
+      ["limit", "LIMIT ?"],
+    ]);
+
     for (let i = 0; i < Object.keys(urlArgs).length; i++) {
-      let currentKey = Object.keys(urlArgs)[i];
-      if (
-        currentKey !== "memberID" &&
-        currentKey !== "eventID" &&
-        currentKey !== "limit"
-      ) {
-        throw new Error("unsupported");
+      let currentKey: string = Object.keys(urlArgs)[i];
+      if (!validParams.has(currentKey)) {
+        throw new Error("unsupported Key");
       }
 
-      if (currentKey === "eventID") {
-        //if where is not null, works if we already have an existing event:
+      if (validParams.has(currentKey) && currentKey != "limit") {
         if (WHERE) {
-          WHERE += " AND event_id = ?";
+          WHERE += " AND " + validParams.get(currentKey);
         } else {
           JOIN += " JOIN Report R on R.request_id = ACR.uuid";
-          WHERE += " WHERE event_id = ?";
-        }
-        data.push(urlArgs[currentKey]);
-      }
-
-      if (currentKey === "memberID") {
-        if (WHERE) {
-          WHERE += " AND person_uuid = ?";
-        } else {
-          JOIN += " JOIN Report R on R.request_id = ACR.uuid";
-          WHERE += " WHERE person_uuid = ?";
+          WHERE += " WHERE " + validParams.get(currentKey);
         }
         data.push(urlArgs[currentKey]);
       }
@@ -77,13 +67,12 @@ class AttendanceController {
     }
 
     const totalQuery = SELECT + FROM + JOIN + WHERE + LIMIT;
-    console.log(totalQuery);
     const [result] = await pool.query(totalQuery, data);
     return [result];
   }
 
-  //should we use joi before entering here, or is it alright if the database fails to input by itself and we catch that in the routes?
   async postAttendanceChange(attendance) {
+    //create the initial Attendance Change Request
     let initialQuery = "INSERT INTO AttendanceChangeRequest (";
     let initialValue = " Values (";
 
@@ -100,10 +89,7 @@ class AttendanceController {
       }
     }
 
-    const totalString = initialQuery + initialValue;
-    console.log(totalString);
-    const [result] = await pool.query(totalString, Object.values(attendance));
-
+    //TODO: fix this to not use uuid, since the user is not likely sending this
     const attendanceChange = await pool.query(
       "SELECT * FROM AttendanceChangeRequest WHERE uuid = ?",
       [attendance.uuid]

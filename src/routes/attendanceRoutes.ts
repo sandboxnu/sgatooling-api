@@ -4,6 +4,7 @@
 
 import AttendanceController from "../controllers/attendanceController.js";
 import express from "express";
+import { Attendance } from "../types/attendanceType.js";
 import { isEmpty } from "./memberRoutes.js";
 const attendanceRouter = express.Router();
 
@@ -28,13 +29,14 @@ attendanceRouter.get("/:attendanceId", async (req, res, next) => {
     const attendance = await attendanceController.getAttendanceChange(
       attendanceId
     );
-    res.status(200).json(attendance);
+    res.status(200).send(attendance);
   } catch (err: unknown) {
     res.status(500).send("Database Error");
   }
 });
 
 /* POST attendance change */
+
 attendanceRouter.post("/", async (req, res) => {
   try {
     const insertedItem = await attendanceController.postAttendanceChange(
@@ -47,17 +49,3 @@ attendanceRouter.post("/", async (req, res) => {
 });
 
 export { attendanceRouter };
-
-/*
-
-//req type:
-
-{"uuid":"02623027b2d379be85ff0ac2dc2feeef",
-"name":"Jenny Kim",
-"time_submitted":"2022-11-22 11:50:50",
-"date_of_change":"2022-11-28 00:00:00",
-"type":"absent",
-"change_status":"excused",
-"reason":" Hello test1 from seank"
-}
-*/
