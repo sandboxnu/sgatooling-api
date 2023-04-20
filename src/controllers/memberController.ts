@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 import * as mysql2 from "mysql2";
-import { Member } from "../types/member.js";
-import { isEmpty } from "../routes/members.js";
+//import { Member } from "../types/member.js";
+import { isEmpty } from "../routes/memberRoutes.js";
 
 export const pool = mysql2
   .createPool({

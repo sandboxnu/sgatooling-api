@@ -1,9 +1,8 @@
 import express from "express";
-import MembersController from "../controllers/members.js";
+import MembersController from "../controllers/memberController.js";
 import Joi from "joi";
 
 const membersRouter = express.Router();
-
 const membersController = new MembersController();
 
 //method for determining whether an incoming json is empty
@@ -14,7 +13,6 @@ export const isEmpty = (obj) => {
   return true;
 };
 
-//is this enough to cause some change?
 membersRouter.get("/", async (req, res) => {
   //initial queries that are not supported -> 500 error
   let members;
@@ -57,7 +55,7 @@ membersRouter.post("/", async (req, res) => {
       const newMember = await membersController.createMember(req.body);
       res.status(200).send(newMember);
     } catch (error: unknown) {
-      res.status(500).send("Database error");
+      res.status(500).send("Database Error");
     }
   }
 });
