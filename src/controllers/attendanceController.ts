@@ -17,6 +17,14 @@ class AttendanceController {
     return result;
   }
 
+  /**
+   * Function for the GET / endpoint. 
+   * @param urlArgs:
+   * limit=n - get the n most recent AttendanceChange requests
+   * memberID=id - gets the records associated with the Member with ID id
+   * eventID=id - gets the records associated with the Event with ID eventID
+   * @returns Attendance data depending on arguments passed in the URL. 
+   */
   async getSpecificAttendanceChange(urlArgs) {
     if (isEmpty(urlArgs)) {
       return this.getAllAttendanceChanges();

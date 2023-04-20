@@ -1,4 +1,3 @@
-//import cors from "cors";
 import express from "express";
 import { membersRouter } from "./routes/memberRoutes.js";
 import { eventRouter } from "../src/routes/eventRoutes.js";
@@ -12,7 +11,6 @@ const PORT = 8080;
 
 const app = express();
 app.use(express.json());
-//app.use(cors());
 
 // Members routes
 app.use("/members", membersRouter);
