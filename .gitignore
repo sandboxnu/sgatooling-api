@@ -2,3 +2,5 @@ node_modules
 .DS_Store
 .env
 dist
+/thunder-tests
+tests/mockdata.ts

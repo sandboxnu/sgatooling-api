@@ -1,7 +1,5 @@
 // Controller class for the Attendance API endpoints
-import { Attendance } from "../types/attendanceType.js";
-import { pool } from "../controllers/memberController.js";
-import { isEmpty } from "../routes/memberRoutes.js";
+import { pool, isEmpty, createdRandomUID } from "../utils.js";
 
 class AttendanceController {
   async getAllAttendanceChanges() {
@@ -11,7 +9,7 @@ class AttendanceController {
 
   async getAttendanceChange(id) {
     const [result] = await pool.query(
-      "SELECT * FROM AttendanceChangeRequest WHERE uuid = ?",
+      "SELECT * FROM AttendanceChangeRequest WHERE id = ?",
       [id]
     );
     return result;
@@ -22,17 +20,14 @@ class AttendanceController {
       return this.getAllAttendanceChanges();
     }
 
-    let SELECT =
-      " SELECT name, time_submitted, date_of_change, type, change_status, reason, time_arriving, time_leaving";
-    let FROM = " FROM AttendanceChangeRequest ACR";
-    let JOIN = "";
+    let SELECTFROM = "SELECT * FROM AttendanceChangeRequest";
     let WHERE = "";
     let LIMIT = "";
     let data = [];
 
     const validParams = new Map([
-      ["eventID", "event_id = ?"],
-      ["memberID", "person_uuid = ?"],
+      ["eventID", "eventID = ?"],
+      ["memberID", "memberID = ?"],
       ["limit", "LIMIT ?"],
     ]);
 
@@ -46,7 +41,7 @@ class AttendanceController {
         if (WHERE) {
           WHERE += " AND " + validParams.get(currentKey);
         } else {
-          JOIN += " JOIN Report R on R.request_id = ACR.uuid";
+          //JOIN += " JOIN Report R on R.request_id = ACR.uuid";
           WHERE += " WHERE " + validParams.get(currentKey);
         }
         data.push(urlArgs[currentKey]);
@@ -58,15 +53,21 @@ class AttendanceController {
       data.push(parseInt(urlArgs["limit"]));
     }
 
-    const totalQuery = SELECT + FROM + JOIN + WHERE + LIMIT;
+    const totalQuery = SELECTFROM + WHERE + LIMIT;
+    console.log(totalQuery);
     const [result] = await pool.query(totalQuery, data);
-    return [result];
+    return result;
   }
 
+  //TODO: getting lint errors with types for these parameters, any suggestions on specifying the type for this to match what I
+  //expect would be nice, but idk how that works
   async postAttendanceChange(attendance) {
-    //create the initial Attendance Change Request
-    let initialQuery = "INSERT INTO AttendanceChangeRequest (";
-    let initialValue = " Values (";
+    //generate the UUID(the API is responsible for creating this)
+    const randomuuid = createdRandomUID();
+    //change_status is given to be pending since its just created
+    let initialQuery =
+      "INSERT INTO AttendanceChangeRequest (id, change_status, ";
+    let initialValue = " Values (?, ?, ";
 
     const keys = Object.keys(attendance);
     for (let index = 0; index < keys.length; index++) {
@@ -81,10 +82,16 @@ class AttendanceController {
       }
     }
 
-    //TODO: fix this to not use uuid, since the user is not likely sending this
-    const attendanceChange = await pool.query(
-      "SELECT * FROM AttendanceChangeRequest WHERE uuid = ?",
-      [attendance.uuid]
+    const totalString = initialQuery + initialValue;
+    console.log(totalString);
+    const newValues = [randomuuid, "pending"].concat(Object.values(attendance));
+    //initial query to insert the item in the db
+    const [result] = await pool.query(totalString, newValues);
+
+    //subsequent query to get the information of the item we just inserted
+    const [attendanceChange] = await pool.query(
+      "SELECT * FROM AttendanceChangeRequest WHERE id = ?",
+      [randomuuid]
     );
 
     return attendanceChange;

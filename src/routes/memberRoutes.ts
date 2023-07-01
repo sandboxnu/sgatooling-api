@@ -1,17 +1,12 @@
 import express from "express";
 import MembersController from "../controllers/memberController.js";
+import { isEmpty } from "../utils.js";
 import Joi from "joi";
 
 const membersRouter = express.Router();
 const membersController = new MembersController();
 
 //method for determining whether an incoming json is empty
-export const isEmpty = (obj) => {
-  for (var x in obj) {
-    return false;
-  }
-  return true;
-};
 
 membersRouter.get("/", async (req, res) => {
   //initial queries that are not supported -> 500 error
@@ -29,6 +24,7 @@ membersRouter.get("/", async (req, res) => {
     }
     res.status(200).send(members);
   } catch (error: unknown) {
+    //gets thrown if there was invalid key supplied as well
     res.status(500).send("Database Error");
   }
 });
@@ -36,14 +32,15 @@ membersRouter.get("/", async (req, res) => {
 membersRouter.post("/", async (req, res) => {
   //schema to enforce the types that we need and the requirements that we need
   const schema = Joi.object({
+    //I guess string type is ok
     nuid: Joi.string().required(),
     first_name: Joi.string().required(),
     last_name: Joi.string().required(),
     email: Joi.string().required(),
-    active: Joi.boolean().required(),
+    active_member: Joi.boolean().required(),
     can_vote: Joi.boolean().required(),
     include_in_quorum: Joi.boolean().required(),
-    receive_not_present_email: Joi.boolean().required(),
+    receive_email_notifs: Joi.boolean().required(),
     can_log_in: Joi.boolean().required(),
   });
 
