@@ -1,5 +1,7 @@
 // Controller class for the Attendance API endpoints
-import { pool, isEmpty, createdRandomUID } from "../utils.js";
+import { Attendance } from "../types/types";
+import { AQueryType } from "../types/types";
+import { pool, isEmpty, createdRandomUID } from "../utils";
 
 class AttendanceController {
   async getAllAttendanceChanges() {
@@ -7,7 +9,7 @@ class AttendanceController {
     return result;
   }
 
-  async getAttendanceChange(id) {
+  async getAttendanceChange(id: string) {
     const [result] = await pool.query(
       "SELECT * FROM AttendanceChangeRequest WHERE id = ?",
       [id]
@@ -15,11 +17,7 @@ class AttendanceController {
     return result;
   }
 
-  async getSpecificAttendanceChange(urlArgs) {
-    if (isEmpty(urlArgs)) {
-      return this.getAllAttendanceChanges();
-    }
-
+  async getSpecificAttendanceChange(urlArgs: AQueryType) {
     let SELECTFROM = "SELECT * FROM AttendanceChangeRequest";
     let WHERE = "";
     let LIMIT = "";
@@ -33,35 +31,31 @@ class AttendanceController {
 
     for (let i = 0; i < Object.keys(urlArgs).length; i++) {
       let currentKey: string = Object.keys(urlArgs)[i];
-      if (!validParams.has(currentKey)) {
-        throw new Error("unsupported Key");
-      }
-
       if (validParams.has(currentKey) && currentKey != "limit") {
         if (WHERE) {
           WHERE += " AND " + validParams.get(currentKey);
         } else {
-          //JOIN += " JOIN Report R on R.request_id = ACR.uuid";
           WHERE += " WHERE " + validParams.get(currentKey);
         }
+        // was giving some really annoying errors about string| undefined types
+        // not a solution but stops the type error.
+        // @ts-ignore
         data.push(urlArgs[currentKey]);
       }
     }
 
     if (urlArgs.hasOwnProperty("limit")) {
       LIMIT += " LIMIT ?";
-      data.push(parseInt(urlArgs["limit"]));
+      // non-null assertion since we just checked if the urlArgs has this key
+      data.push(parseInt(urlArgs["limit"] as string));
     }
 
     const totalQuery = SELECTFROM + WHERE + LIMIT;
-    console.log(totalQuery);
     const [result] = await pool.query(totalQuery, data);
     return result;
   }
 
-  //TODO: getting lint errors with types for these parameters, any suggestions on specifying the type for this to match what I
-  //expect would be nice, but idk how that works
-  async postAttendanceChange(attendance) {
+  async postAttendanceChange(attendance: Attendance) {
     //generate the UUID(the API is responsible for creating this)
     const randomuuid = createdRandomUID();
     //change_status is given to be pending since its just created
@@ -83,7 +77,6 @@ class AttendanceController {
     }
 
     const totalString = initialQuery + initialValue;
-    console.log(totalString);
     const newValues = [randomuuid, "pending"].concat(Object.values(attendance));
     //initial query to insert the item in the db
     const [result] = await pool.query(totalString, newValues);

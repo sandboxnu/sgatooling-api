@@ -3,12 +3,12 @@ dotenv.config();
 import * as mysql2 from "mysql2";
 import { v4 as uuidv4 } from "uuid";
 import express from "express";
-import { membersRouter } from "./routes/memberRoutes.js";
-import { eventRouter } from "./routes/eventRoutes.js";
-import { attendanceRouter } from "./routes/attendanceRoutes.js";
+import { membersRouter } from "./routes/memberRoutes";
+import { eventRouter } from "./routes/eventRoutes";
+import { attendanceRouter } from "./routes/attendanceRoutes";
 
 //file to export useful functions for the rest of the files/tests
-export const isEmpty = (obj) => {
+export const isEmpty = (obj: any) => {
   for (const x in obj) {
     return false;
   }
@@ -33,6 +33,7 @@ export const createdRandomUID = (): string => {
   return uuidv4().replace(/-/g, "");
 };
 
+//const to create a server, was using to test out jest, but not going well :(,
 export const createServer = () => {
   const app = express();
 

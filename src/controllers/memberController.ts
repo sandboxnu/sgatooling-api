@@ -1,4 +1,5 @@
-import { isEmpty, pool, createdRandomUID } from "../utils.js";
+import { Member, MQueryType } from "../types/types";
+import { isEmpty, pool, createdRandomUID } from "../utils";
 
 class MembersController {
   async getAllMembers() {
@@ -9,8 +10,8 @@ class MembersController {
     return result;
   }
 
-  async getSpecificGroup(urlArgs) {
-    //because we join with MemberGroup ad more we need to list the parameters we need from the Member Table
+  async getSpecificGroup(urlArgs: MQueryType) {
+    //because we join with MemberGroup and more we need to list the parameters we need from the Member Table
     let SELECTFROM =
       "SELECT Member.id, nuid, first_name, last_name, email, active_member, can_vote, receive_email_notifs, include_in_quorum, can_log_in FROM Member ";
     let JOIN = "";
@@ -25,40 +26,35 @@ class MembersController {
 
     for (let index = 0; index < Object.keys(urlArgs).length; index++) {
       const item = Object.keys(urlArgs)[index];
-      if (!validParams.has(item)) {
-        throw new Error("unsupported Key");
-      }
 
       if (index >= 1) {
         WHERE += " AND ";
       }
 
-      if (validParams.has(item)) {
-        if (item === "group") {
-          //very fun join statements :)
-          //including this join separately because maybe its not assumed a member is in a group
-          JOIN +=
-            "JOIN Membership ON Member.id = Membership.membership_id JOIN MembershipGroup ON Membership.group_id = MembershipGroup.id ";
-          data = [urlArgs[item]];
-        }
-        WHERE += validParams.get(item);
+      if (item === "group") {
+        //including this join separately because maybe its not assumed a member is in a group
+        JOIN +=
+          "JOIN Membership ON Member.id = Membership.membership_id JOIN MembershipGroup ON Membership.group_id = MembershipGroup.id ";
+        data = [urlArgs[item]];
       }
+      WHERE += validParams.get(item);
     }
 
     let totalString = SELECTFROM + JOIN + WHERE;
-    console.log(totalString);
 
     const [result] = await pool.query(totalString, data);
 
     return isEmpty(result) ? null : result;
   }
 
-  async createMember(bodyData) {
+  async createMember(bodyData: Member) {
     const randomuuid = createdRandomUID();
+    const keys = Object.keys(bodyData);
+    const values = Object.values(bodyData);
+
     let initialQuery = "INSERT INTO Member (id, ";
     let initialValue = " Values (?,";
 
-    const keys = Object.keys(bodyData);
     for (let index = 0; index < keys.length; index++) {
       const item = keys[index];
       //unless we are at the last index:
@@ -72,15 +68,12 @@ class MembersController {
     }
 
     const totalString = initialQuery + initialValue;
-    console.log(totalString);
-    const newValues = [randomuuid].concat(Object.values(bodyData));
+    const newValues = [randomuuid, ...values];
     //initial query to insert the item in the db
     const [result] = await pool.query(totalString, newValues);
 
     //subsequent query to get the information of the item we just inserted
-    const [Member] = await pool.query("SELECT * FROM Member WHERE id = ?", [
-      randomuuid,
-    ]);
+    const Member = this.getMember(randomuuid);
 
     return Member;
   }

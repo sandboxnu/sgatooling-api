@@ -1,28 +1,35 @@
 // Attendance Routes
 // Route implementation for attendance api endpoints
 // Routes calls a controller which calls the repo which calls the db
-
-import AttendanceController from "../controllers/attendanceController.js";
 import express from "express";
-import Joi from "joi";
-const attendanceRouter = express.Router();
+import { z } from "zod";
+import { AttendanceSchema, AttendanceQuery } from "../types/types";
+import { isEmpty } from "../utils";
+import AttendanceController from "../controllers/attendanceController";
 
+const attendanceRouter = express.Router();
 const attendanceController = new AttendanceController();
 
 /* GET all attendance changes */
 attendanceRouter.get("/", async (req, res) => {
+  let people;
   try {
-    const people = await attendanceController.getSpecificAttendanceChange(
-      req.query
-    );
+    if (isEmpty(req.query)) {
+      people = await attendanceController.getAllAttendanceChanges();
+    } else {
+      const result = AttendanceQuery.parse(req.query);
+      people = await attendanceController.getSpecificAttendanceChange(result);
+    }
     res.status(200).send(people);
   } catch (error: unknown) {
-    res.status(500).send("Database Error");
+    error instanceof z.ZodError
+      ? res.status(405).send("Invalid Input")
+      : res.status(500).send("Database Error");
   }
 });
 
 /* GET attendance change for specific id */
-attendanceRouter.get("/:attendanceId", async (req, res, next) => {
+attendanceRouter.get("/:attendanceId", async (req, res) => {
   try {
     const attendanceId = req.params["attendanceId"];
     const attendance = await attendanceController.getAttendanceChange(
@@ -35,34 +42,17 @@ attendanceRouter.get("/:attendanceId", async (req, res, next) => {
 });
 
 /* POST attendance change */
-
 attendanceRouter.post("/", async (req, res) => {
-  const schema = Joi.object({
-    request_type: Joi.string()
-      .valid("absent", "arrive late", "leave early")
-      .required(),
-    reason: Joi.string(),
-    //idk why but date().timestamp() doesn't match the typical format from the api spec so string is used for now...
-    //TODO: try out joi/date
-    time_submitted: Joi.string(),
-    arrive_time: Joi.string(),
-    leave_time: Joi.string(),
-    memberID: Joi.string().required(),
-    eventID: Joi.string().required(),
-  });
-
-  const result = schema.validate(req.body);
-  if (result.error) {
-    res.status(405).send("Invalid Input");
-    return;
-  }
   try {
+    const result = AttendanceSchema.parse(req.body);
     const insertedItem = await attendanceController.postAttendanceChange(
-      req.body
+      result
     );
     res.status(200).send(insertedItem);
   } catch (error: unknown) {
-    res.status(500).send("Database Error");
+    error instanceof z.ZodError
+      ? res.status(405).send("Invalid Input")
+      : res.status(500).send("Database Error");
   }
 });
 

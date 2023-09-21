@@ -3,4 +3,3 @@ node_modules
 .env
 dist
 /thunder-tests
-tests/mockdata.ts
