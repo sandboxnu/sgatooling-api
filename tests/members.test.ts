@@ -86,7 +86,7 @@ describe("Member Route tests", () => {
         .get("/members")
         .query({ notAValidParam: "Sandbox" });
 
-      expect(statusCode).toBe(404);
+      expect(statusCode).toBe(405);
 
       //Controller should not be called with the invalid params:
       expect(mockMembersControllerGroupMembers).toHaveBeenCalledTimes(0);

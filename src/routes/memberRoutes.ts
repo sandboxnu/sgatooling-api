@@ -8,7 +8,6 @@ const membersRouter = express.Router();
 const membersController = new MembersController();
 
 membersRouter.get("/", async (req, res) => {
-  //initial queries that are not supported -> 500 error
   let members;
   try {
     if (isEmpty(req.query)) {
@@ -24,7 +23,7 @@ membersRouter.get("/", async (req, res) => {
       : res.status(200).send(members);
   } catch (error: unknown) {
     error instanceof z.ZodError
-      ? res.status(404).send("Invalid Query Parameters")
+      ? res.status(405).send("Invalid Query Parameters")
       : res.status(500).send("Database Error");
   }
 });

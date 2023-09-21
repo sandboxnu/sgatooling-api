@@ -1,9 +1,6 @@
 //Types and Schemas for the database
 import { z } from "zod";
 
-//each of these do have ids, need to figure out that since the types may be a bit wonky but idk, also with Attendance Changes,
-//think I can just extend whenever I need to lol
-
 //Member
 export const MemberSchema = z
   .object({
