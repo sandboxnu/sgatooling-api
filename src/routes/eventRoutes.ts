@@ -3,32 +3,36 @@
 // Uses a eventController object to get required data.
 // Routes uses Controller which calls Repository which calls the DB
 
-import EventsController from "../controllers/eventController.js";
 import express from "express";
+import EventsController from "../controllers/eventController";
+import { isEmpty } from "../utils";
 const eventRouter = express.Router();
 
 const eventsController = new EventsController();
 
 /* GET all events. */
-eventRouter.get("/", async (req, res, next) => {
+eventRouter.get("/", async (req, res) => {
   try {
     const eventsList = await eventsController.getAllEvents();
     res.status(200).json(eventsList);
   } catch (err: unknown) {
-    next(err);
+    res.status(500).send("Database Error");
   }
 });
 
 /* Gets event data for a given event */
-eventRouter.get("/:eventId", async (req, res, next) => {
-  const eventId = req.params["eventId"];
-  const event = await eventsController.getEvent(eventId);
-  if (!event) {
-    res.status(404).send("Event Not Found");
-    return;
+eventRouter.get("/:eventId", async (req, res) => {
+  try {
+    const eventId = req.params["eventId"];
+    const event = await eventsController.getEvent(eventId);
+    if (isEmpty(event)) {
+      res.status(404).send("Event Not Found");
+      return;
+    }
+    res.status(200).send(event);
+  } catch (e: unknown) {
+    res.status(500).send("Database error");
   }
-
-  res.status(200).send(event);
 });
 
 export { eventRouter };

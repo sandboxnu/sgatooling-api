@@ -1,8 +1,6 @@
 // Controller class for the Event API endpoints
 // The controller has a class and method that call the repository.
-
-// are these imports supposed to have .js extension?
-import { pool } from "../controllers/memberController.js";
+import { pool } from "../utils";
 
 class EventsController {
   async getAllEvents() {
@@ -11,9 +9,7 @@ class EventsController {
   }
 
   async getEvent(id: string) {
-    const [result] = await pool.query(`SELECT * FROM Event WHERE uuid = ?`, [
-      id,
-    ]);
+    const [result] = await pool.query(`SELECT * FROM Event WHERE id = ?`, [id]);
     return result;
   }
 }

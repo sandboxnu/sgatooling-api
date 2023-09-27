@@ -1,7 +1,7 @@
 // Controller class for the Attendance API endpoints
-import { Attendance } from "../types/attendanceType.js";
-import { pool } from "../controllers/memberController.js";
-import { isEmpty } from "../routes/memberRoutes.js";
+import { Attendance } from "../types/types";
+import { AQueryType } from "../types/types";
+import { pool, isEmpty, createdRandomUID } from "../utils";
 
 class AttendanceController {
   async getAllAttendanceChanges() {
@@ -9,72 +9,59 @@ class AttendanceController {
     return result;
   }
 
-  async getAttendanceChange(id) {
+  async getAttendanceChange(id: string) {
     const [result] = await pool.query(
-      "SELECT * FROM AttendanceChangeRequest WHERE uuid = ?",
+      "SELECT * FROM AttendanceChangeRequest WHERE id = ?",
       [id]
     );
     return result;
   }
 
-  /**
-   * Function for the GET / endpoint. 
-   * @param urlArgs:
-   * limit=n - get the n most recent AttendanceChange requests
-   * memberID=id - gets the records associated with the Member with ID id
-   * eventID=id - gets the records associated with the Event with ID eventID
-   * @returns Attendance data depending on arguments passed in the URL. 
-   */
-  async getSpecificAttendanceChange(urlArgs) {
-    if (isEmpty(urlArgs)) {
-      return this.getAllAttendanceChanges();
-    }
-
-    let SELECT =
-      " SELECT name, time_submitted, date_of_change, type, change_status, reason, time_arriving, time_leaving";
-    let FROM = " FROM AttendanceChangeRequest ACR";
-    let JOIN = "";
+  async getSpecificAttendanceChange(urlArgs: AQueryType) {
+    let SELECTFROM = "SELECT * FROM AttendanceChangeRequest";
     let WHERE = "";
     let LIMIT = "";
     let data = [];
 
     const validParams = new Map([
-      ["eventID", "event_id = ?"],
-      ["memberID", "person_uuid = ?"],
+      ["eventID", "eventID = ?"],
+      ["memberID", "memberID = ?"],
       ["limit", "LIMIT ?"],
     ]);
 
     for (let i = 0; i < Object.keys(urlArgs).length; i++) {
       let currentKey: string = Object.keys(urlArgs)[i];
-      if (!validParams.has(currentKey)) {
-        throw new Error("unsupported Key");
-      }
-
       if (validParams.has(currentKey) && currentKey != "limit") {
         if (WHERE) {
           WHERE += " AND " + validParams.get(currentKey);
         } else {
-          JOIN += " JOIN Report R on R.request_id = ACR.uuid";
           WHERE += " WHERE " + validParams.get(currentKey);
         }
+        // was giving some really annoying errors about string| undefined types
+        // not a solution but stops the type error.
+        // @ts-ignore
         data.push(urlArgs[currentKey]);
       }
     }
 
     if (urlArgs.hasOwnProperty("limit")) {
       LIMIT += " LIMIT ?";
-      data.push(parseInt(urlArgs["limit"]));
+      // non-null assertion since we just checked if the urlArgs has this key
+      data.push(parseInt(urlArgs["limit"] as string));
     }
 
-    const totalQuery = SELECT + FROM + JOIN + WHERE + LIMIT;
+    const totalQuery = SELECTFROM + WHERE + LIMIT;
     const [result] = await pool.query(totalQuery, data);
-    return [result];
+    return result;
   }
 
-  async postAttendanceChange(attendance) {
-    //create the initial Attendance Change Request
-    let initialQuery = "INSERT INTO AttendanceChangeRequest (";
-    let initialValue = " Values (";
+  async postAttendanceChange(attendance: Attendance) {
+    //generate the UUID(the API is responsible for creating this)
+    const randomuuid = createdRandomUID();
+    //change_status is given to be pending since its just created
+    let initialQuery =
+      "INSERT INTO AttendanceChangeRequest (id, change_status, ";
+    let initialValue = " Values (?, ?, ";
 
     const keys = Object.keys(attendance);
     for (let index = 0; index < keys.length; index++) {
@@ -89,10 +76,15 @@ class AttendanceController {
       }
     }
 
-    //TODO: fix this to not use uuid, since the user is not likely sending this
-    const attendanceChange = await pool.query(
-      "SELECT * FROM AttendanceChangeRequest WHERE uuid = ?",
-      [attendance.uuid]
+    const totalString = initialQuery + initialValue;
+    const newValues = [randomuuid, "pending"].concat(Object.values(attendance));
+    //initial query to insert the item in the db
+    const [result] = await pool.query(totalString, newValues);
+
+    //subsequent query to get the information of the item we just inserted
+    const [attendanceChange] = await pool.query(
+      "SELECT * FROM AttendanceChangeRequest WHERE id = ?",
+      [randomuuid]
     );
 
     return attendanceChange;
