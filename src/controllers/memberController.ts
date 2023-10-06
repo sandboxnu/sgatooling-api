@@ -84,6 +84,23 @@ class MembersController {
     ]);
     return isEmpty(memberInfo) ? null : memberInfo;
   }
+
+  // TODO : ADD TYPES TO RETURN FROM QUERY
+  async getMemberTags(id: string) {
+    const [memberTags] = await pool.query(
+      `SELECT * FROM MemberGroup WHERE person_id = ?`,
+      [id]
+    );
+
+    return memberTags;
+  }
+
+  async updateMemberPreferences(id: string) {
+    await pool.query(
+      `UPDATE Member SET receive_not_present_email = NOT receive_not_present_email WHERE uuid = ?`,
+      [id]
+    );
+  }
 }
 
 export default MembersController;

@@ -58,4 +58,24 @@ membersRouter.get("/:id", async (req, res) => {
   }
 });
 
+membersRouter.get("/memberTags/:id", async (req, res) => {
+  try {
+    const memberTags = await membersController.getMemberTags(req.params.id);
+    res.status(200).send(memberTags);
+  } catch (error: unknown) {
+    res.status(500).send("Database Error");
+  }
+});
+
+membersRouter.patch("/updateEmailPreferences/:id", async (req, res) => {
+  try {
+    const memberTags = await membersController.getMemberTags(req.params.id);
+    res
+      .status(200)
+      .send(`Updated Emailed Preferences for ID: ${req.params.id}`);
+  } catch (error: unknown) {
+    res.status(500).send("Database Error");
+  }
+});
+
 export { membersRouter };
