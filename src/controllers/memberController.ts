@@ -100,6 +100,8 @@ class MembersController {
       `UPDATE Member SET receive_not_present_email = NOT receive_not_present_email WHERE uuid = ?`,
       [id]
     );
+
+    return this.getMember(id);
   }
 }
 

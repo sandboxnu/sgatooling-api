@@ -69,10 +69,10 @@ membersRouter.get("/memberTags/:id", async (req, res) => {
 
 membersRouter.patch("/updateEmailPreferences/:id", async (req, res) => {
   try {
-    const memberTags = await membersController.getMemberTags(req.params.id);
-    res
-      .status(200)
-      .send(`Updated Emailed Preferences for ID: ${req.params.id}`);
+    const member = await membersController.updateMemberPreferences(
+      req.params.id
+    );
+    res.status(200).send(member);
   } catch (error: unknown) {
     res.status(500).send("Database Error");
   }
