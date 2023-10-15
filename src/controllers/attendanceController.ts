@@ -11,7 +11,7 @@ class AttendanceController {
 
   async getAttendanceChange(id: string) {
     const [result] = await pool.query(
-      "SELECT * FROM AttendanceChangeRequest WHERE id = ?",
+      "SELECT * FROM AttendanceChangeRequest WHERE uuid = ?",
       [id]
     );
     return result;

@@ -9,7 +9,9 @@ class EventsController {
   }
 
   async getEvent(id: string) {
-    const [result] = await pool.query(`SELECT * FROM Event WHERE id = ?`, [id]);
+    const [result] = await pool.query(`SELECT * FROM Event WHERE uuid = ?`, [
+      id,
+    ]);
     return result;
   }
 }
