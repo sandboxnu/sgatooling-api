@@ -4,9 +4,7 @@ import { isEmpty, pool, createdRandomUID } from "../utils";
 class MembersController {
   async getAllMembers() {
     //Note: can't use select * in here otherwise the encodings flood the entire screen
-    const [result] = await pool.query(
-      "SELECT id, nuid, first_name, last_name, email, active_member, can_vote, receive_email_notifs, include_in_quorum, can_log_in FROM Member"
-    );
+    const [result] = await pool.query("SELECT * FROM Member");
     return result;
   }
 
@@ -79,9 +77,10 @@ class MembersController {
   }
 
   async getMember(id: string) {
-    const [memberInfo] = await pool.query(`SELECT * FROM Member WHERE id = ?`, [
-      id,
-    ]);
+    const [memberInfo] = await pool.query(
+      `SELECT * FROM Member WHERE uuid = ?`,
+      [id]
+    );
     return isEmpty(memberInfo) ? null : memberInfo;
   }
 
