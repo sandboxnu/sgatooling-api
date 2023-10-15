@@ -42,8 +42,8 @@ export const createServer = () => {
 
   // Members routes
   app.use("/members", membersRouter);
-  // Events routes
 
+  // Events routes
   app.use("/events", eventRouter);
   // Attendance routes
 
