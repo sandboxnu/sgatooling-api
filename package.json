@@ -6,7 +6,6 @@
   "scripts": {
     "test": "jest",
     "build": "tsc",
-    "vercel-build": "echo noop",
     "prestart": "npm run build",
     "start": "node ./dist/api/index.js",
     "dev": "ts-node-esm src/index.ts"
