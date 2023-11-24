@@ -11,7 +11,9 @@ class AuthController {
     );
 
     try {
+      console.log(memberInfo)
       const typedUser = MemberSchema.parse(memberInfo)
+      console.log("Parsed successfully")
       return typedUser as Member
     }
     catch (err) {
