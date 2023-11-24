@@ -7,6 +7,7 @@ import { membersRouter } from "./routes/memberRoutes";
 import { eventRouter } from "./routes/eventRoutes";
 import { attendanceRouter } from "./routes/attendanceRoutes";
 import { Request, Response, NextFunction } from "express";
+import { authRouter } from "./routes/auth";
 
 //file to export useful functions for the rest of the files/tests
 export const isEmpty = (obj: any) => {
@@ -60,6 +61,8 @@ export const createServer = () => {
   //Authenticate all requests against API Key
   // Need to redo all the routes to ignore the key
   app.use(authApiKey)
+
+  app.use("/auth", authRouter)
 
   // Members routes
   app.use("/members", membersRouter);
