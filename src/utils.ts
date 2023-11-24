@@ -13,11 +13,15 @@ export const isEmpty = (obj: any) => {
 
   for (const x in obj) {
     if (x === 'key') {
+      console.log("key detected")
       continue
     } else {
+      console.log("something else also detected")
+      console.log(obj)
       return false;
     }
   }
+  console.log("Our object is returning true")
   return true
 };
 
