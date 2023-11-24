@@ -44,7 +44,7 @@ export const createdRandomUID = (): string => {
 };
 
 const authApiKey = (req: Request, res: Response, next: NextFunction) => {
-  const key = req.query.apik
+  const key = req.query.key
   if (key) {
     console.log("Entering key auth")
     next()
