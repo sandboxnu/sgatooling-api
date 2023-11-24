@@ -12,7 +12,7 @@ passport.use(new Strategy((username, password, done) => {
     (data) => {
       console.log(username)
       if (data instanceof Error) {
-        console.log("Error")
+        console.log("Error", data)
         done(undefined, false, {message: 'User not found'})
       }
       else if (data.last_name !== password) {
