@@ -11,20 +11,21 @@ class AuthController {
     );
 
     try {
-      // console.log(memberInfo)
+      const member = memberInfo[0]
+      console.log(member)
       console.log(
         "Input for member schema parse function"
       )
       console.log({
-        uuid: memberInfo.uuid, 
-        first_name: memberInfo.first_name, 
-        last_name: memberInfo.last_name, 
-        email: memberInfo.email, 
-        active_member: memberInfo.active_member, 
-        can_vote: memberInfo.voting_rights, 
-        include_in_quorum: memberInfo.include_in_quorum, 
-        receive_email_notifs: memberInfo.receive_not_present_email, 
-        can_log_in: !(memberInfo.sign_in_blocked)
+        uuid: member.uuid, 
+        first_name: member.first_name, 
+        last_name: member.last_name, 
+        email: member.email, 
+        active_member: member.active_member, 
+        can_vote: member.voting_rights, 
+        include_in_quorum: member.include_in_quorum, 
+        receive_email_notifs: member.receive_not_present_email, 
+        can_log_in: !(member.sign_in_blocked)
       })
       const typedUser = MemberSchema.parse({
         uuid: memberInfo.uuid, 
