@@ -1,7 +1,23 @@
-// import passport from "passport";
-// import passportLocal from "passport-local"
+import { isEmpty, pool } from "../utils";
+import { Member, MemberSchema } from "../types/types";
+import { z } from "zod";
 
-// class AuthController {
-//   const test = passportLocal.Strategy
 
-// }
+class AuthController {
+  async getMember(id: string): Promise<Member | Error> {
+    const [memberInfo] = await pool.query(
+      `SELECT * FROM Member WHERE uuid = ?`,
+      [id]
+    );
+
+    try {
+      const typedUser = MemberSchema.parse(memberInfo)
+      return typedUser as Member
+    }
+    catch (err) {
+      return new Error("User not found")
+    }
+  }
+}
+
+export default AuthController

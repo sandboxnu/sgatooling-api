@@ -13,15 +13,11 @@ export const isEmpty = (obj: any) => {
 
   for (const x in obj) {
     if (x === 'key') {
-      console.log("key detected")
       continue
     } else {
-      console.log("something else also detected")
-      console.log(obj)
       return false;
     }
   }
-  console.log("Our object is returning true")
   return true
 };
 
@@ -46,6 +42,7 @@ export const createdRandomUID = (): string => {
 const authApiKey = (req: Request, res: Response, next: NextFunction) => {
   const key = req.query.key
   if (key && process.env.API_KEY === key) {
+    delete req.query.key
     next()
   }
   else {
@@ -60,6 +57,8 @@ export const createServer = () => {
   app.use(express.json());
   //app.use(cors());
 
+  //Authenticate all requests against API Key
+  // Need to redo all the routes to ignore the key
   app.use(authApiKey)
 
   // Members routes
