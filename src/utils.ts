@@ -52,10 +52,7 @@ export const createServer = () => {
   app.use(express.json());
   //app.use(cors());
 
-  app.use((req, res, next) => {
-    console.log('Time:', Date.now())
-    next()
-  })
+  app.use(authApiKey)
 
   // Members routes
   app.use("/members", membersRouter);
