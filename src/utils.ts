@@ -10,10 +10,15 @@ import { Request, Response, NextFunction } from "express";
 
 //file to export useful functions for the rest of the files/tests
 export const isEmpty = (obj: any) => {
+
   for (const x in obj) {
-    return false;
+    if (x === 'key') {
+      continue
+    } else {
+      return false;
+    }
   }
-  return true;
+  return true
 };
 
 //database
