@@ -45,8 +45,7 @@ export const createdRandomUID = (): string => {
 
 const authApiKey = (req: Request, res: Response, next: NextFunction) => {
   const key = req.query.key
-  if (key) {
-    console.log("Entering key auth")
+  if (key && process.env.API_KEY === key) {
     next()
   }
   else {
@@ -74,7 +73,7 @@ export const createServer = () => {
 
   // Base route
   app.use("/", (_req, res) => {
-    res.status(404).send("Endpoint does not exist. This is a test");
+    res.status(404).send("Endpoint does not exist");
   });
 
   return app;
