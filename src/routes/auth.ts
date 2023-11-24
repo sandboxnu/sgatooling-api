@@ -1,5 +1,5 @@
 import express from "express"
-import passport, { Passport } from "passport";
+import passport from "passport";
 import { Strategy } from "passport-local";
 import AuthController from "../controllers/authController";
 
@@ -10,14 +10,19 @@ const authController = new AuthController()
 passport.use(new Strategy((username, password, done) => {
   authController.getMember(username).then(
     (data) => {
+      console.log(username)
       if (data instanceof Error) {
+        console.log("Error")
         done(undefined, false, {message: 'User not found'})
       }
       else if (data.last_name !== password) {
+        console.log("last name no match")
         done(undefined, false, {message: 'NUID and Last Name do not match'})
       }
     }
-  )
+  ).catch((err) => {
+    console.log("error thrown", err)
+  })
 }))
 
 authRouter.post('/login', passport.authenticate('local'), async (req, res) => {
