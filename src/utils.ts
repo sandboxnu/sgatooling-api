@@ -89,14 +89,13 @@ export const createServer = () => {
   app.use("/auth", authRouter)
 
   app.use((req, res, next) => {
-    console.log(req)
     const auth = req.isAuthenticated()
     if (auth) {
-      console.log("Authorization should have worked")
+      console.log("Session Authenticated")
       next()
     }
     else {
-      console.log("Something wrong with session management")
+      console.error("Session not found")
     }
   })
 
