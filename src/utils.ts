@@ -56,9 +56,22 @@ const authApiKey = (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-function createSession() {
+//function to create a server, was using to test out jest, but not going well :(,
+export const createServer = () => {
+  
+  const app = express();
+
   const SQLiteStore = sqliteStoreFactory(session)
-  return session({
+
+  app.use(express.json());
+  //app.use(cors());
+
+  //Authenticate all requests against API Key
+  // Need to redo all the routes to ignore the key
+  app.use(authApiKey)
+  app.use("/auth", authRouter)
+
+  app.use(session({
     secret: 'sandbox is so cool',
     resave: false,
     saveUninitialized: false,
@@ -72,23 +85,7 @@ function createSession() {
       // (optional) Session id prefix. Default is no prefix.
       prefix: 'sess:',
     })
-  })
-}
-
-//function to create a server, was using to test out jest, but not going well :(,
-export const createServer = () => {
-  
-  const app = express();
-
-  app.use(express.json());
-  //app.use(cors());
-
-  //Authenticate all requests against API Key
-  // Need to redo all the routes to ignore the key
-  app.use(authApiKey)
-  app.use("/auth", authRouter)
-
-  app.use(createSession())
+  }))
   app.use(passport.authenticate('session'));
 
   // Members routes
