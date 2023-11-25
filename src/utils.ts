@@ -89,9 +89,16 @@ export const createServer = () => {
   app.use("/auth", authRouter)
 
   app.use((req, res, next) => {
-    if (req.isAuthenticated()) {
-        return next();
-    }})
+    console.log(req)
+    const auth = req.isAuthenticated()
+    if (auth) {
+      console.log("Authorization should have worked")
+      next()
+    }
+    else {
+      console.log("Something wrong with session management")
+    }
+  })
 
   // Members routes
   app.use("/members", membersRouter);

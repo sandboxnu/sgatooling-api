@@ -24,10 +24,6 @@ class AuthController {
         receive_email_notifs: !!member.receive_not_present_email, 
         can_log_in: !(member.sign_in_blocked)
       })
-
-      console.log(typedUser)
-      
-      console.log("Parsed successfully")
       return typedUser as Member
     }
     catch (err) {
