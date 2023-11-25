@@ -88,6 +88,11 @@ export const createServer = () => {
   app.use(authApiKey)
   app.use("/auth", authRouter)
 
+  app.use((req, res, next) => {
+    if (req.isAuthenticated()) {
+        return next();
+    }})
+
   // Members routes
   app.use("/members", membersRouter);
 
