@@ -19,6 +19,9 @@ passport.use(new Strategy((username, password, done) => {
         console.log("last name no match")
         done(undefined, false, {message: 'NUID and Last Name do not match'})
       }
+      else {
+        done(undefined, data)
+      }
     }
   ).catch((err) => {
     console.log("error thrown", err)
