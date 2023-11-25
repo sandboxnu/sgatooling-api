@@ -75,6 +75,7 @@ export const createServer = () => {
   app.use("/auth", authRouter)
 
   app.use((req, res, next) => {
+    console.log(req)
     const auth = req.isAuthenticated()
     if (auth) {
       console.log("Session Authenticated")
