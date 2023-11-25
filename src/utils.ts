@@ -3,10 +3,6 @@ dotenv.config();
 import * as mysql2 from "mysql2";
 import { v4 as uuidv4 } from "uuid";
 import express from "express";
-import { membersRouter } from "./routes/memberRoutes";
-import { eventRouter } from "./routes/eventRoutes";
-import { attendanceRouter } from "./routes/attendanceRoutes";
-import { authRouter } from "./routes/auth";
 import session from "express-session"
 import sqlite3 from 'sqlite3'
 import sqliteStoreFactory from 'express-session-sqlite'
