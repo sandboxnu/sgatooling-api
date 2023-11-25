@@ -8,6 +8,11 @@ import { eventRouter } from "./routes/eventRoutes";
 import { attendanceRouter } from "./routes/attendanceRoutes";
 import { Request, Response, NextFunction } from "express";
 import { authRouter } from "./routes/auth";
+import session from "express-session"
+import sqlite3 from 'sqlite3'
+import sqliteStoreFactory from 'express-session-sqlite'
+import passport from "passport";
+
 
 //file to export useful functions for the rest of the files/tests
 export const isEmpty = (obj: any) => {
@@ -51,8 +56,28 @@ const authApiKey = (req: Request, res: Response, next: NextFunction) => {
   }
 }
 
-//const to create a server, was using to test out jest, but not going well :(,
+function createSession() {
+  const SQLiteStore = sqliteStoreFactory(session)
+  return session({
+    secret: 'sandbox is so cool',
+    resave: false,
+    saveUninitialized: false,
+    store: new SQLiteStore({
+      driver: sqlite3.Database,
+      // for in-memory database
+      // path: ':memory:'
+      path: '/tmp/sqlite.db',
+      // Session TTL in milliseconds
+      ttl: 24 * 60 * 60 * 1000,
+      // (optional) Session id prefix. Default is no prefix.
+      prefix: 'sess:',
+    })
+  })
+}
+
+//function to create a server, was using to test out jest, but not going well :(,
 export const createServer = () => {
+  
   const app = express();
 
   app.use(express.json());
@@ -61,8 +86,10 @@ export const createServer = () => {
   //Authenticate all requests against API Key
   // Need to redo all the routes to ignore the key
   app.use(authApiKey)
-
   app.use("/auth", authRouter)
+
+  app.use(createSession())
+  app.use(passport.authenticate('session'));
 
   // Members routes
   app.use("/members", membersRouter);
@@ -79,4 +106,5 @@ export const createServer = () => {
   });
 
   return app;
-};
+}
+
