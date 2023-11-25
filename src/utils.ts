@@ -6,7 +6,6 @@ import express from "express";
 import { membersRouter } from "./routes/memberRoutes";
 import { eventRouter } from "./routes/eventRoutes";
 import { attendanceRouter } from "./routes/attendanceRoutes";
-import { Request, Response, NextFunction } from "express";
 import { authRouter } from "./routes/auth";
 import session from "express-session"
 import sqlite3 from 'sqlite3'
@@ -50,11 +49,16 @@ export const createServer = () => {
 
   app.use(express.json());
   //app.use(cors());
+
   //session?!
   app.use(session({
     secret: 'sandbox is so cool',
     resave: false,
     saveUninitialized: false,
+    cookie: {
+      secure: true, 
+      httpOnly: true
+    },
     store: new SQLiteStore({
       driver: sqlite3.Database,
       // for in-memory database
