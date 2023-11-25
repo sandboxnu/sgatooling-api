@@ -1,12 +1,14 @@
 import express from "express"
 import passport from "passport";
 import { Strategy } from "passport-local";
-import AuthController from "../controllers/authController";
-import { MemberSchema } from "../types/types";
+import AuthController from "../src/controllers/authController"
+import { MemberSchema } from "../src/types/types"
+import { prepareRouter } from "../src/svfUtils";
 
 
 const authRouter = express.Router();
 const authController = new AuthController()
+
 
 passport.use(new Strategy((username, password, done) => {
   authController.getMember(username).then(
@@ -43,5 +45,7 @@ authRouter.post('/login', passport.authenticate('local'), async (req, res) => {
   res.status(200).json({message: "Authorized"});
 })
 
-export {authRouter}
+const attendanceApp = prepareRouter(express())
 
+
+export default attendanceApp
