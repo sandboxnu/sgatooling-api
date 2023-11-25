@@ -16,15 +16,10 @@ import passport from "passport";
 
 //file to export useful functions for the rest of the files/tests
 export const isEmpty = (obj: any) => {
-
   for (const x in obj) {
-    if (x === 'key') {
-      continue
-    } else {
-      return false;
-    }
+    return false;
   }
-  return true
+  return true;
 };
 
 //database
@@ -45,16 +40,6 @@ export const createdRandomUID = (): string => {
   return uuidv4().replace(/-/g, "");
 };
 
-const authApiKey = (req: Request, res: Response, next: NextFunction) => {
-  const key = req.query.key
-  if (key && process.env.API_KEY === key) {
-    delete req.query.key
-    next()
-  }
-  else {
-    return res.status(400).send("Incorrect API Key")
-  }
-}
 
 //function to create a server, was using to test out jest, but not going well :(,
 export const createServer = () => {
@@ -83,9 +68,6 @@ export const createServer = () => {
   }))
   app.use(passport.authenticate('session'));
 
-  //Authenticate all requests against API Key
-  // Need to redo all the routes to ignore the key
-  app.use(authApiKey)
   app.use("/auth", authRouter)
 
   app.use((req, res, next) => {
