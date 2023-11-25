@@ -55,10 +55,6 @@ export const createServer = () => {
     secret: 'sandbox is so cool',
     resave: false,
     saveUninitialized: false,
-    cookie: {
-      secure: true, 
-      httpOnly: true
-    },
     store: new SQLiteStore({
       driver: sqlite3.Database,
       // for in-memory database
