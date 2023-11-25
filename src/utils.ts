@@ -65,12 +65,7 @@ export const createServer = () => {
 
   app.use(express.json());
   //app.use(cors());
-
-  //Authenticate all requests against API Key
-  // Need to redo all the routes to ignore the key
-  app.use(authApiKey)
-  app.use("/auth", authRouter)
-
+  //session?!
   app.use(session({
     secret: 'sandbox is so cool',
     resave: false,
@@ -87,6 +82,11 @@ export const createServer = () => {
     })
   }))
   app.use(passport.authenticate('session'));
+
+  //Authenticate all requests against API Key
+  // Need to redo all the routes to ignore the key
+  app.use(authApiKey)
+  app.use("/auth", authRouter)
 
   // Members routes
   app.use("/members", membersRouter);
