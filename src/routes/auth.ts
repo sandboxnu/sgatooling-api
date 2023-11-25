@@ -26,7 +26,7 @@ passport.use(new Strategy((username, password, done) => {
 }))
 
 authRouter.post('/login', passport.authenticate('local'), async (req, res) => {
-  res.status(200).json({user: req.user, message: "authorized"})
+  return res.status(200).json({user: req.user, message: "authorized"})
 })
 
 export {authRouter}
