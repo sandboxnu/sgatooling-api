@@ -2,11 +2,6 @@ import dotenv from "dotenv";
 dotenv.config();
 import * as mysql2 from "mysql2";
 import { v4 as uuidv4 } from "uuid";
-import express from "express";
-import session from "express-session"
-import sqlite3 from 'sqlite3'
-import sqliteStoreFactory from 'express-session-sqlite'
-import passport from "passport";
 
 
 //file to export useful functions for the rest of the files/tests
