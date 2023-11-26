@@ -5,10 +5,9 @@ const authController = new AuthController()
 
 export default async(req: VercelRequest, res: VercelResponse) => {
   try {
-    console.log(req.body)
     console.log(req.query)
-    const member = await authController.getMember(req.body.id as string)
-    if (member.last_name !== req.body.password) {
+    const member = await authController.getMember(req.query.id as string)
+    if (member.last_name !== req.query.password) {
       res.status(400).json({message: "Incorrect Password"})
     }
     else {
