@@ -5,13 +5,11 @@ import { RowDataPacket } from "mysql2";
 
 
 class AuthController {
-  async getMember(id: string): Promise<Member | Error> {
+  async getMember(id: string): Promise<Member> {
     const [memberInfo] = await pool.query(
       `SELECT * FROM Member WHERE uuid = ?`,
       [id]
     )
-
-    try {
       const member = (memberInfo as RowDataPacket[])[0]
       const typedUser = MemberSchema.parse({
         uuid: member.uuid, 
@@ -25,10 +23,6 @@ class AuthController {
         can_log_in: !(member.sign_in_blocked)
       })
       return typedUser as Member
-    }
-    catch (err) {
-      return new Error("User not found")
-    }
   }
 }
 
