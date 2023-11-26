@@ -17,7 +17,7 @@ JWT
 JWT_SECRET=
 ```
 
-Then do `yarn` and `vercel dev` to get the project running.
+Then do `yarn` and `vercel dev` to get the project running locally. 
 
 ## Tech Stack
 
