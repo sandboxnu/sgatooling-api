@@ -4,7 +4,7 @@ This is the API for the SGA Tooling project
 
 ## Get Started
 
-- Clone the project, add environment variables (listed below) in `.env`.
+Clone the project, add environment variables (listed below) in `.env`.
 
 ```env
 MYSQL DB
