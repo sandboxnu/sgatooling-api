@@ -8,7 +8,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
     const member = await membersController.updateMemberPreferences(
       req.query.id as string
     );
-    res.status(200).send(member);
+    res.status(201).json({member: member});
   } catch (error: unknown) {
     res.status(500).send("Database Error");
   }

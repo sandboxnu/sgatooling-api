@@ -14,7 +14,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       return
     }
 
-    res.status(200).send(event);
+    res.status(200).json({event: event});
   } catch (e: unknown) {
     res.status(500).send("Database error");
   }

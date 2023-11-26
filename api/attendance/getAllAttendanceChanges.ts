@@ -21,7 +21,7 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.status(200).send(people);
   } catch (error: unknown) {
     error instanceof ZodError
-      ? res.status(405).send("Invalid Input")
+      ? res.status(400).send("Invalid Input")
       : res.status(500).send("Database Error");
   }
 };

@@ -19,10 +19,10 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     //if no members found return a 404 else, send back the members
     !members
       ? res.status(404).send("Member Not Found")
-      : res.status(200).send(members);
+      : res.status(200).json({members:members});
   } catch (error: unknown) {
     error instanceof z.ZodError
-      ? res.status(405).send("Invalid Query Parameters")
+      ? res.status(400).send("Invalid Query Parameters")
       : res.status(500).send("Database Error");
   }
 };

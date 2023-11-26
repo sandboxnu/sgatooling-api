@@ -10,7 +10,7 @@ export default async function (req: VercelRequest, res: VercelResponse) {
       res.status(404).send("Member Not Found");
       return;
     }
-    res.status(200).send(member);
+    res.status(200).json({member: member});
   } catch (error: unknown) {
     res.status(500).send("Database Error");
   }
