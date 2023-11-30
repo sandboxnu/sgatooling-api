@@ -11,14 +11,14 @@ const attendanceController = new AttendanceController();
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   try {
-    let people;
+    let attendance;
     if (isEmpty(req.query)) {
-      people = await attendanceController.getAllAttendanceChanges();
+      attendance = await attendanceController.getAllAttendanceChanges();
     } else {
       const result = AttendanceQuery.parse(req.query);
-      people = await attendanceController.getSpecificAttendanceChange(result);
+      attendance = await attendanceController.getSpecificAttendanceChange(result);
     }
-    res.status(200).send(people);
+    res.status(200).json(attendance);
   } catch (error: unknown) {
     error instanceof ZodError
       ? res.status(400).send("Invalid Input")
