@@ -1,7 +1,7 @@
 // Controller class for the Attendance API endpoints
 import { Attendance } from "../types/types";
 import { AQueryType } from "../types/types";
-import { pool, isEmpty, createdRandomUID } from "../utils";
+import { pool, createdRandomUID } from "../utils";
 
 class AttendanceController {
   async getAllAttendanceChanges() {

@@ -5,7 +5,7 @@ import { z } from "zod";
 export const MemberSchema = z
   .object({
     //want this to be 9 digits but some quirks with that nuids can start with 0 so can't use lt/gt I think
-    nuid: z.number().int(),
+    uuid: z.string(),
     first_name: z.string(),
     last_name: z.string(),
     email: z.string(),

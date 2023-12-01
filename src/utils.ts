@@ -2,10 +2,7 @@ import dotenv from "dotenv";
 dotenv.config();
 import * as mysql2 from "mysql2";
 import { v4 as uuidv4 } from "uuid";
-import express from "express";
-import { membersRouter } from "./routes/memberRoutes";
-import { eventRouter } from "./routes/eventRoutes";
-import { attendanceRouter } from "./routes/attendanceRoutes";
+
 
 //file to export useful functions for the rest of the files/tests
 export const isEmpty = (obj: any) => {
@@ -31,28 +28,4 @@ export const createdRandomUID = (): string => {
   //uses the uuidv4 method and replaces the hypens with empty strings similar to how its implemented
   //in the python version
   return uuidv4().replace(/-/g, "");
-};
-
-//const to create a server, was using to test out jest, but not going well :(,
-export const createServer = () => {
-  const app = express();
-
-  app.use(express.json());
-  //app.use(cors());
-
-  // Members routes
-  app.use("/members", membersRouter);
-
-  // Events routes
-  app.use("/events", eventRouter);
-  // Attendance routes
-
-  app.use("/attendance-changes", attendanceRouter);
-
-  // Base route
-  app.use("/", (_req, res) => {
-    res.status(404).send("Endpoint does not exist.");
-  });
-
-  return app;
 };
