@@ -72,3 +72,12 @@ export const AttendanceQuery = z
 export type AQueryType = z.infer<typeof AttendanceQuery>;
 
 export type Attendance = z.infer<typeof AttendanceSchema>;
+
+//AttendanceRecord
+export const AttendanceRecord = z
+  .object({
+    person_id: z.string(),
+    event_id: z.string(),
+    attendance_status: z.string(),
+  })
+  .strict();
