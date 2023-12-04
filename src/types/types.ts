@@ -41,7 +41,7 @@ export const EventSchema = z
     start_time: z.string().datetime(),
     end_time: z.string().datetime(),
     sign_in_open: z.boolean(),
-    event_description: z.string(),
+    description: z.string(),
     location: z.string(),
   })
   .strict();
@@ -57,8 +57,8 @@ export const AttendanceSchema = z
     time_submitted: z.string().datetime(),
     arrive_time: z.string().datetime().optional(),
     leave_time: z.string().datetime().optional(),
-    memberID: z.string(),
-    eventID: z.string(),
+    member_id: z.string(),
+    event_id: z.string(),
   })
   .strict();
 
