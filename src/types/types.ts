@@ -4,8 +4,9 @@ import { z } from "zod";
 //Member
 export const MemberSchema = z
   .object({
-    //want this to be 9 digits but some quirks with that nuids can start with 0 so can't use lt/gt I think
+    //uuid still remains, and now we add in nuid field
     uuid: z.string(),
+    nuid: z.string(),
     first_name: z.string(),
     last_name: z.string(),
     email: z.string(),

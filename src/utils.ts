@@ -40,6 +40,6 @@ export const verifyJWTRequest = (req: VercelRequest) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     return decoded;
   } catch (err: unknown) {
-    return false;
+    return err;
   }
 };
