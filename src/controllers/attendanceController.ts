@@ -55,7 +55,10 @@ class AttendanceController {
 
     const totalQuery = SELECTFROM + WHERE + LIMIT;
     const [result] = await pool.query(totalQuery, data);
-    return result;
+
+    const parsedData = (result as RowDataPacket)[0];
+    const AttendanceChange = parseDataToAttendanceType(parsedData);
+    return AttendanceChange;
   }
 
   async postAttendanceChange(attendance: Attendance) {

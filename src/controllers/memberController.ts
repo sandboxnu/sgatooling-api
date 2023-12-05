@@ -48,8 +48,21 @@ class MembersController {
     let totalString = SELECTFROM + JOIN + WHERE;
 
     const [result] = await pool.query(totalString, data);
+    if (isEmpty(result)) return null;
 
-    return isEmpty(result) ? null : result;
+    const members = result as RowDataPacket[];
+    const parsedMembers = members
+      .map((member) => {
+        try {
+          const Member = parseDataToMemberType(member);
+          return Member;
+        } catch (err) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+
+    return parsedMembers;
   }
 
   async createMember(bodyData: Member) {
@@ -100,16 +113,15 @@ class MembersController {
       [id]
     );
 
-    // another instance where I need to map, each result into the correct type, also not sure if this makes things much slower...
     const castedValue = data as RowDataPacket[];
     const Tags = castedValue
       .map((element) => {
         try {
-          const castedValue = MemberGroupSchema.parse({
+          const castedMemberValue = MemberGroupSchema.parse({
             person_id: element.person_id,
             membership_group: element.membership_group,
           });
-          return castedValue as MemberGroupType;
+          return castedMemberValue as MemberGroupType;
         } catch (err) {
           return null;
         }
