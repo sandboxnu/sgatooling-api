@@ -1,6 +1,7 @@
 // Controller class for the Attendance API endpoints
+import { RowDataPacket } from "mysql2";
 import { Attendance } from "../types/types";
-import { AQueryType } from "../types/types";
+import { AQueryType, parseDataToAttendanceType } from "../types/types";
 import { pool, createdRandomUID } from "../utils";
 
 class AttendanceController {
@@ -10,11 +11,15 @@ class AttendanceController {
   }
 
   async getAttendanceChange(id: string) {
-    const [result] = await pool.query(
+    const [data] = await pool.query(
       "SELECT * FROM AttendanceChangeRequest WHERE uuid = ?",
       [id]
     );
-    return result;
+
+    const parsedData = (data as RowDataPacket)[0];
+
+    const AttendanceChange = parseDataToAttendanceType(parsedData);
+    return AttendanceChange;
   }
 
   async getSpecificAttendanceChange(urlArgs: AQueryType) {
@@ -24,8 +29,8 @@ class AttendanceController {
     let data = [];
 
     const validParams = new Map([
-      ["eventID", "eventID = ?"],
-      ["memberID", "memberID = ?"],
+      ["eventID", "event_id = ?"],
+      ["memberID", "member_id = ?"],
       ["limit", "LIMIT ?"],
     ]);
 
@@ -38,7 +43,6 @@ class AttendanceController {
           WHERE += " WHERE " + validParams.get(currentKey);
         }
         // was giving some really annoying errors about string| undefined types
-        // not a solution but stops the type error.
         // @ts-ignore
         data.push(urlArgs[currentKey]);
       }
@@ -46,7 +50,6 @@ class AttendanceController {
 
     if (urlArgs.hasOwnProperty("limit")) {
       LIMIT += " LIMIT ?";
-      // non-null assertion since we just checked if the urlArgs has this key
       data.push(parseInt(urlArgs["limit"] as string));
     }
 
@@ -82,12 +85,9 @@ class AttendanceController {
     const [result] = await pool.query(totalString, newValues);
 
     //subsequent query to get the information of the item we just inserted
-    const [attendanceChange] = await pool.query(
-      "SELECT * FROM AttendanceChangeRequest WHERE id = ?",
-      [randomuuid]
-    );
+    const insertedAttendanceChange = this.getAttendanceChange(randomuuid);
 
-    return attendanceChange;
+    return insertedAttendanceChange;
   }
 }
 
