@@ -12,8 +12,21 @@ import { isEmpty, pool, createdRandomUID } from "../utils";
 
 class MembersController {
   async getAllMembers() {
-    const [result] = await pool.query("SELECT * FROM Member");
-    return result;
+    const [data] = await pool.query("SELECT * FROM Member");
+    const parsedData = data as RowDataPacket[];
+
+    const Members = parsedData
+      .map((member) => {
+        try {
+          const parsedMember = parseDataToMemberType(member);
+          return parsedMember;
+        } catch (err) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+
+    return Members;
   }
 
   async getSpecificGroup(urlArgs: MQueryType) {

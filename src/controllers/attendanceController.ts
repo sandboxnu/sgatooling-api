@@ -6,8 +6,21 @@ import { pool, createdRandomUID } from "../utils";
 
 class AttendanceController {
   async getAllAttendanceChanges() {
-    const [result] = await pool.query("SELECT * FROM AttendanceChangeRequest");
-    return result;
+    const [data] = await pool.query("SELECT * FROM AttendanceChangeRequest");
+
+    const parsedData = data as RowDataPacket[];
+    const AttendanceChanges = parsedData
+      .map((attendance) => {
+        try {
+          const parsedAttendance = parseDataToAttendanceType(attendance);
+          return parsedAttendance;
+        } catch (err) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+
+    return AttendanceChanges;
   }
 
   async getAttendanceChange(id: string) {
