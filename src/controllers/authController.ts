@@ -6,9 +6,10 @@ import { RowDataPacket } from "mysql2";
 class AuthController {
   async getMember(id: string): Promise<Member> {
     const [memberInfo] = await pool.query(
-      `SELECT * FROM Member WHERE uuid = ?`,
+      `SELECT * FROM Member WHERE nuid = ?`,
       [id]
     );
+    // TODO: figure out how to actually pass back these buffers as correct booleans
     const member = (memberInfo as RowDataPacket[])[0];
     const typedUser = MemberSchema.parse({
       uuid: member.uuid,
