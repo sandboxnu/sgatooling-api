@@ -71,7 +71,9 @@ export const EventSchema = z
     sign_in_closed: z.boolean(),
     description: z.string(),
     location: z.string(),
-    membership_group: z.array(z.enum(["New Senators Fall 2022", "All active"])),
+    membership_group: z
+      .array(z.enum(["New Senators Fall 2022", "All active"]))
+      .optional(),
   })
   .strict();
 
@@ -94,17 +96,16 @@ export const parseDataToEventType = (data: RowDataPacket) => {
 
 //Attendance
 //datetime type may be incorrect/annoying can change later
-export const AttendanceSchema = z
-  .object({
-    type: z.enum(["absent", "arriving late", "leaving early"]),
-    reason: z.string(),
-    time_submitted: z.string(),
-    arrive_time: z.string().optional(),
-    leave_time: z.string().optional(),
-    member_id: z.string(),
-    event_id: z.string(),
-  })
-  .strict();
+export const AttendanceSchema = z.object({
+  uuid: z.string(),
+  type: z.enum(["absent", "arriving late", "leaving early"]),
+  reason: z.string(),
+  time_submitted: z.string(),
+  time_arriving: z.string().optional(),
+  time_leaving: z.string().optional(),
+  member_id: z.string(),
+  event_id: z.string(),
+});
 
 export const AttendanceQuery = z
   .object({
@@ -120,11 +121,12 @@ export type Attendance = z.infer<typeof AttendanceSchema>;
 
 export const parseDataToAttendanceType = (data: RowDataPacket) => {
   const typedAttendance = AttendanceSchema.parse({
+    uuid: data.uuid,
     type: data.type,
     reason: data.reason,
     ...(data.time_submitted && { time_submitted: data.time_submitted }),
-    ...(data.arrive_time && { arrive_time: data.arrive_time }),
-    ...(data.leave_time && { leave_time: data.leave_time }),
+    ...(data.time_arriving && { time_arriving: data.time_arriving }),
+    ...(data.time_leaving && { time_leaving: data.time_leaving }),
     member_id: data.member_id,
     event_id: data.member_id,
   });
@@ -147,4 +149,4 @@ export const TagSchema = z.object({
   membership_group: z.string(),
 });
 
-export type Tags = z.infer<typeof EventSchema>;
+export type Tags = z.infer<typeof TagSchema>;

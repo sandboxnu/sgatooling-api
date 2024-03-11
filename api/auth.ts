@@ -3,11 +3,13 @@ import AuthController from "../src/controllers/authController";
 import dotenv from "dotenv";
 dotenv.config();
 import jwt from "jsonwebtoken";
+import allowCors from "./middleware";
 
 const secret = process.env.JWT_SECRET;
 const authController = new AuthController();
 
-export default async (req: VercelRequest, res: VercelResponse) => {
+// TODO: come back to this route since auth should be used on each route as well in the middleware
+const auth = async (req: VercelRequest, res: VercelResponse) => {
   try {
     const member = await authController.getMember(req.query.id as string);
 
@@ -27,3 +29,5 @@ export default async (req: VercelRequest, res: VercelResponse) => {
     res.status(400).json({ message: "User Not Found", error: err });
   }
 };
+
+export default allowCors(auth);
