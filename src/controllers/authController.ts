@@ -1,6 +1,5 @@
-import { isEmpty, pool, castBufferToBoolean } from "../utils";
+import { pool, castBufferToBoolean } from "../utils";
 import { Member, MemberSchema } from "../types/types";
-import { z } from "zod";
 import { RowDataPacket } from "mysql2";
 
 class AuthController {
@@ -9,7 +8,7 @@ class AuthController {
       `SELECT * FROM Member WHERE nuid = ?`,
       [id]
     );
-    // TODO: figure out how to actually pass back these buffers as correct booleans
+
     const member = (memberInfo as RowDataPacket[])[0];
     const typedUser = MemberSchema.parse({
       uuid: member.uuid,

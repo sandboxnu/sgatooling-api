@@ -1,11 +1,13 @@
 import { VercelApiHandler, VercelRequest, VercelResponse } from "@vercel/node";
+import dotenv from "dotenv";
+dotenv.config();
 
 // Cors wrapper used on each function
 const allowCors =
   (handler: VercelApiHandler) =>
   async (req: VercelRequest, res: VercelResponse) => {
     res.setHeader("Access-Control-Allow-Credentials", "true");
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:3001");
+    res.setHeader("Access-Control-Allow-Origin", process.env.ORIGIN!);
 
     res.setHeader(
       "Access-Control-Allow-Methods",
