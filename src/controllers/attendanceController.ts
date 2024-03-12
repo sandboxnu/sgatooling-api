@@ -69,9 +69,24 @@ class AttendanceController {
     const totalQuery = SELECTFROM + WHERE + LIMIT;
     const [result] = await pool.query(totalQuery, data);
 
-    const parsedData = (result as RowDataPacket)[0];
-    const AttendanceChange = parseDataToAttendanceType(parsedData);
-    return AttendanceChange;
+    // the user has no Attendance Changes
+    if (!result) {
+      return [];
+    }
+
+    const parsedData = result as RowDataPacket[];
+    const AttendanceChanges = parsedData
+      .map((attendance) => {
+        try {
+          const parsedAttendance = parseDataToAttendanceType(attendance);
+          return parsedAttendance;
+        } catch (err) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+
+    return AttendanceChanges;
   }
 
   async postAttendanceChange(attendance: Attendance) {
@@ -79,7 +94,7 @@ class AttendanceController {
     const randomuuid = createdRandomUID();
     //change_status is given to be pending since its just created
     let initialQuery =
-      "INSERT INTO AttendanceChangeRequest (id, change_status, ";
+      "INSERT INTO AttendanceChangeRequest (uuid, change_status, ";
     let initialValue = " Values (?, ?, ";
 
     const keys = Object.keys(attendance);
