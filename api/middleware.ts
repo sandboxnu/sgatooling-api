@@ -17,7 +17,6 @@ const allowCors =
     );
 
     if (req.method === "OPTIONS") {
-      console.log("made it in here!");
       res.status(200).end();
       return;
     }
