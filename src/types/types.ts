@@ -150,3 +150,47 @@ export const TagSchema = z.object({
 });
 
 export type Tags = z.infer<typeof TagSchema>;
+
+//Voting Types:
+export const VotingHistorySchema = z
+  .object({
+    member_id: z.string(),
+    vote_id: z.string(),
+    vote_seletion: z.enum(["A", "Y", "N"]),
+  })
+  .strict();
+
+export const VotingQuestionSchema = z
+  .object({
+    uuid: z.string(),
+    question: z.string(),
+    description: z.string().optional(),
+    time_start: z.string(),
+    time_end: z.string(),
+  })
+  .strict();
+
+export type VotingHistory = z.infer<typeof VotingHistorySchema>;
+
+export type VotingQuestion = z.infer<typeof VotingQuestionSchema>;
+
+export const VoteHistoryQuerySchema = z
+  .object({
+    member_id: z.string(),
+    vote_id: z.string().optional(),
+  })
+  .strict();
+
+export type VHQuery = z.infer<typeof VoteHistoryQuerySchema>;
+
+export const parseDataToVoteQuestion = (data: RowDataPacket) => {
+  const typedQuestion = VotingQuestionSchema.parse({
+    uuid: data.uuid,
+    question: data.question,
+    ...(data.description && { description: data.description }),
+    time_start: data.time_start,
+    time_end: data.time_end,
+  });
+
+  return typedQuestion as VotingQuestion;
+};
