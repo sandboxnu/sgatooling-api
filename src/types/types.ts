@@ -2,6 +2,7 @@
 import { z } from "zod";
 import { RowDataPacket } from "mysql2";
 import { castBufferToBoolean } from "../utils";
+import { string } from "joi";
 
 //Member
 export const MemberSchema = z
@@ -96,8 +97,7 @@ export const parseDataToEventType = (data: RowDataPacket) => {
 
 //Attendance
 //datetime type may be incorrect/annoying can change later
-export const AttendanceSchema = z.object({
-  uuid: z.string(),
+export const AttendanceReqSchema = z.object({
   type: z.enum(["absent", "arriving late", "leaving early"]),
   reason: z.string(),
   time_submitted: z.string(),
@@ -107,6 +107,7 @@ export const AttendanceSchema = z.object({
   event_id: z.string(),
 });
 
+// uuid, change_status,
 export const AttendanceQuery = z
   .object({
     limit: z.string().optional(),
@@ -117,6 +118,13 @@ export const AttendanceQuery = z
 
 export type AQueryType = z.infer<typeof AttendanceQuery>;
 
+export type AttendanceS = z.infer<typeof AttendanceReqSchema>;
+
+export const AttendanceSchema = AttendanceReqSchema.extend({
+  uuid: z.string(),
+  change_status: z.string(),
+});
+
 export type Attendance = z.infer<typeof AttendanceSchema>;
 
 export const parseDataToAttendanceType = (data: RowDataPacket) => {
@@ -124,11 +132,12 @@ export const parseDataToAttendanceType = (data: RowDataPacket) => {
     uuid: data.uuid,
     type: data.type,
     reason: data.reason,
+    change_status: data.change_status,
     ...(data.time_submitted && { time_submitted: data.time_submitted }),
     ...(data.time_arriving && { time_arriving: data.time_arriving }),
     ...(data.time_leaving && { time_leaving: data.time_leaving }),
     member_id: data.member_id,
-    event_id: data.member_id,
+    event_id: data.event_id,
   });
 
   return typedAttendance as Attendance;
