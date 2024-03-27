@@ -31,6 +31,10 @@ export const createdRandomUID = (): string => {
   return uuidv4().replace(/-/g, "");
 };
 
+export const castBufferToBoolean = (data: any) => {
+  return data.readUInt8() === 1;
+};
+
 export const verifyJWTRequest = (req: VercelRequest) => {
   try {
     const authHeader = req.headers.authorization;

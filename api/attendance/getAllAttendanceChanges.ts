@@ -1,22 +1,25 @@
-
-
-
-import { VercelRequest, VercelResponse } from '@vercel/node'
-import { isEmpty } from "../../src/utils"
+import { VercelRequest, VercelResponse } from "@vercel/node";
+import { isEmpty } from "../../src/utils";
 import { z, ZodError } from "zod";
-import { AttendanceQuery } from "../../src/types/types"
-import AttendanceController from "../../src/controllers/attendanceController"
+import { AttendanceQuery } from "../../src/types/types";
+import AttendanceController from "../../src/controllers/attendanceController";
+import allowCors from "../middleware";
 
 const attendanceController = new AttendanceController();
 
-export default async (req: VercelRequest, res: VercelResponse) => {
+const getAllAttendanceChanges = async (
+  req: VercelRequest,
+  res: VercelResponse
+) => {
   try {
     let attendance;
     if (isEmpty(req.query)) {
       attendance = await attendanceController.getAllAttendanceChanges();
     } else {
       const result = AttendanceQuery.parse(req.query);
-      attendance = await attendanceController.getSpecificAttendanceChange(result);
+      attendance = await attendanceController.getSpecificAttendanceChange(
+        result
+      );
     }
     res.status(200).json(attendance);
   } catch (error: unknown) {
@@ -25,3 +28,5 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       : res.status(500).send("Database Error");
   }
 };
+
+export default allowCors(getAllAttendanceChanges);

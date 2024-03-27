@@ -1,6 +1,6 @@
 // Controller class for the Attendance API endpoints
 import { RowDataPacket } from "mysql2";
-import { Attendance } from "../types/types";
+import { AttendanceS } from "../types/types";
 import { AQueryType, parseDataToAttendanceType } from "../types/types";
 import { pool, createdRandomUID } from "../utils";
 
@@ -69,17 +69,32 @@ class AttendanceController {
     const totalQuery = SELECTFROM + WHERE + LIMIT;
     const [result] = await pool.query(totalQuery, data);
 
-    const parsedData = (result as RowDataPacket)[0];
-    const AttendanceChange = parseDataToAttendanceType(parsedData);
-    return AttendanceChange;
+    // the user has no Attendance Changes
+    if (!result) {
+      return [];
+    }
+
+    const parsedData = result as RowDataPacket[];
+    const AttendanceChanges = parsedData
+      .map((attendance) => {
+        try {
+          const parsedAttendance = parseDataToAttendanceType(attendance);
+          return parsedAttendance;
+        } catch (err) {
+          return null;
+        }
+      })
+      .filter(Boolean);
+
+    return AttendanceChanges;
   }
 
-  async postAttendanceChange(attendance: Attendance) {
+  async postAttendanceChange(attendance: AttendanceS) {
     //generate the UUID(the API is responsible for creating this)
     const randomuuid = createdRandomUID();
     //change_status is given to be pending since its just created
     let initialQuery =
-      "INSERT INTO AttendanceChangeRequest (id, change_status, ";
+      "INSERT INTO AttendanceChangeRequest (uuid, change_status, ";
     let initialValue = " Values (?, ?, ";
 
     const keys = Object.keys(attendance);
