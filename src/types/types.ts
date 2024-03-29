@@ -165,7 +165,7 @@ export const VotingHistorySchema = z
   .object({
     member_id: z.string(),
     vote_id: z.string(),
-    vote_seletion: z.enum(["A", "Y", "N"]),
+    vote_selection: z.enum(["A", "Y", "N"]),
   })
   .strict();
 

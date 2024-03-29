@@ -55,9 +55,7 @@ class AttendanceController {
         } else {
           WHERE += " WHERE " + validParams.get(currentKey);
         }
-        // was giving some really annoying errors about string| undefined types
-        // @ts-ignore
-        data.push(urlArgs[currentKey]);
+        data.push(Object.values(urlArgs)[i]);
       }
     }
 
