@@ -7,6 +7,7 @@ import {
   MemberGroupSchema,
   MemberGroupType,
 } from "../types/types";
+import { TagSchema } from "../types/types";
 import { parseDataToMemberType } from "../types/types";
 import { isEmpty, pool, createdRandomUID } from "../utils";
 
@@ -122,24 +123,16 @@ class MembersController {
 
   async getMemberTags(id: string) {
     const [data] = await pool.query(
-      `SELECT * FROM MemberGroup WHERE person_id = ?`,
+      `SELECT membership_group FROM MemberGroup WHERE person_id = ?`,
       [id]
     );
 
     const castedValue = data as RowDataPacket[];
-    const Tags = castedValue
-      .map((element) => {
-        try {
-          const castedMemberValue = MemberGroupSchema.parse({
-            person_id: element.person_id,
-            membership_group: element.membership_group,
-          });
-          return castedMemberValue as MemberGroupType;
-        } catch (err) {
-          return null;
-        }
+    const Tags = castedValue.map((element) =>
+      TagSchema.parse({
+        membership_group: element.membership_group,
       })
-      .filter(Boolean);
+    );
 
     return Tags;
   }
