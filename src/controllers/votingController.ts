@@ -4,28 +4,47 @@ import {
   VHQuery,
   VotingHistory,
 } from "../types/types";
-import { pool } from "../utils";
+import { isEmpty, pool } from "../utils";
 
 export class VotingController {
-  async getAllQuestions() {
-    const [data] = await pool.query(`SELECT * from VoteQuestion`);
+  async getMostRecentQuestion() {
+    const SELECTFROM = "SELECT uuid, question, description FROM VoteQuestion ";
+    const WHERE = "WHERE time_start < NOW() AND time_end > NOW()";
+    const totalQuery = SELECTFROM + WHERE;
 
-    const parsedData = data as RowDataPacket[];
-    const quesitonList = parsedData
-      .map((question) => {
-        try {
-          return parseDataToVoteQuestion(question);
-        } catch (err) {
-          return null;
-        }
-      })
-      .filter(Boolean);
-
-    return quesitonList;
+    const [result] = await pool.query(totalQuery);
+    return result;
   }
 
-  // if have both vote_id/member_id => we are trying to find whether they already voted for the event
-  // if we have just member_id => we want to find the members voting Records to be displayed
+  async getIfMemberVoted(member_id: string) {
+    // TODO: maybe check if we need an async?
+    const currentQuestion = await this.getMostRecentQuestion();
+
+    const parsedQuestion = currentQuestion as RowDataPacket[];
+
+    // if there is not a currentQuestion Return Blank
+    if (!parsedQuestion) {
+      return [];
+    }
+
+    // with the currentQuestion check based on the uuid, check if we have
+    const SELECT = "SELECT * FROM VoteHistory ";
+    const WHERE = "WHERE vote_id = ? AND member_id = ?";
+    const totalQuery = SELECT + WHERE;
+
+    const data = [parsedQuestion[0].uuid, member_id];
+    const [result] = await pool.query(totalQuery, data);
+
+    // if we found a corresponding vote for this question, show that no vote is available;
+    if (!isEmpty(result)) {
+      return [];
+    }
+
+    // else return the question
+    return parsedQuestion;
+  }
+
+  // check if there is an Active Vote the member can vote on:
   async getVotingHistory(queryParams: VHQuery) {
     const SELECTFROM = "SELECT * FROM VoteHistory";
     let WHERE = "";
@@ -51,6 +70,19 @@ export class VotingController {
     const totalQuery = SELECTFROM + WHERE;
     const [result] = await pool.query(totalQuery, data);
 
+    return result;
+  }
+
+  async getMembersPastVotes(member_id: string) {
+    const SELECT = "SELECT question, vote_selection FROM ";
+    const JOIN =
+      "VoteQuestion JOIN VoteHistory ON VoteQuestion.uuid = VoteHistory.vote_id ";
+    const WHERE = "WHERE member_id = ?";
+
+    const fullQuery = SELECT + JOIN + WHERE;
+    const [result] = await pool.query(fullQuery, [member_id]);
+
+    // TODO: add types for this
     return result;
   }
 
