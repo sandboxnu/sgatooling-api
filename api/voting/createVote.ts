@@ -6,10 +6,7 @@ import allowCors from "../middleware";
 
 const voteHistoryController = new VotingController();
 
-const postAttendanceChange = async (
-  req: VercelRequest,
-  res: VercelResponse
-) => {
+const postVote = async (req: VercelRequest, res: VercelResponse) => {
   try {
     const parsed = VotingHistorySchema.parse(req.body);
     const vote = await voteHistoryController.createVote(parsed);
@@ -21,4 +18,4 @@ const postAttendanceChange = async (
   }
 };
 
-export default allowCors(postAttendanceChange);
+export default allowCors(postVote);
