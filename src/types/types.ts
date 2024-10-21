@@ -1,8 +1,10 @@
+//TODO: the typing and parsing like this is extremly annoying...
+//TODO p2: member should not include the nuid in its type/ what it comes back from the db, change this ( reduce fluff whereever possible)
+
 //Types and Schemas for the database
 import { z } from "zod";
 import { RowDataPacket } from "mysql2";
 import { castBufferToBoolean } from "../utils";
-import { string } from "joi";
 
 //Member
 export const MemberSchema = z
@@ -186,7 +188,7 @@ export type VotingQuestion = z.infer<typeof VotingQuestionSchema>;
 export const VoteHistoryQuerySchema = z
   .object({
     member_id: z.string(),
-    vote_id: z.string().optional(),
+    vote_id: z.string(),
   })
   .strict();
 

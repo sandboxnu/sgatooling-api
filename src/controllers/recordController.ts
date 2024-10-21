@@ -31,6 +31,7 @@ export class RecordController {
     return record;
   }
 
+  // TODO: why don't I naturally just join these instead of having two separate calls?
   async getEventsForMemberRecord(id: string) {
     const [data] = await pool.query(
       `SELECT uuid, event_name, start_time, end_time, sign_in_closed, description, location FROM AttendanceRecord JOIN Event ON AttendanceRecord.event_id = Event.uuid where person_id = ?`,

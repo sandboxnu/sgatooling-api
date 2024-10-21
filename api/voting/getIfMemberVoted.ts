@@ -7,7 +7,7 @@ const votingController = new VotingController();
 
 const getIfMemberVoted = async (req: VercelRequest, res: VercelResponse) => {
   try {
-    const potentialQuestion = await votingController.getIfMemberVoted(
+    const potentialQuestion = await votingController.determineQuestion(
       req.query.id as string
     );
     res.status(200).json(potentialQuestion);

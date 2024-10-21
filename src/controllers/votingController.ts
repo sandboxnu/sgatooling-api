@@ -7,68 +7,62 @@ import {
 import { isEmpty, pool } from "../utils";
 
 export class VotingController {
-  async getMostRecentQuestion() {
-    const SELECTFROM = "SELECT uuid, question, description FROM VoteQuestion ";
-    const WHERE = "WHERE time_start < NOW() AND time_end > NOW()";
-    const totalQuery = SELECTFROM + WHERE;
+  // async getMostRecentQuestion() {
+  //   const SELECTFROM = "SELECT uuid, question, description FROM VoteQuestion ";
+  //   const WHERE = "WHERE time_start < NOW() AND time_end > NOW()";
+  //   const totalQuery = SELECTFROM + WHERE;
 
-    const [result] = await pool.query(totalQuery);
+  //   const [result] = await pool.query(totalQuery);
+  //   return result;
+  // }
+
+  async determineQuestion(member_id: string) {
+    const SELECTFROM =
+      "SELECT vq.question, vq.description FROM VoteQuestion vq";
+    const WHERE =
+      "vq.time_start < NOW() AND vq.time_end > NOW() AND NOT EXISTS(";
+    const innerQuery =
+      " SELECT 1 FROM VoteHistory vh WHERE vq.uuid = vh.vote_id AND member_id = ?";
+
+    const totalQuery = SELECTFROM + WHERE + innerQuery;
+    const [result] = await pool.query(totalQuery, [member_id]);
     return result;
   }
 
-  async getIfMemberVoted(member_id: string) {
-    // TODO: maybe check if we need an async?
-    const currentQuestion = await this.getMostRecentQuestion();
+  // async getIfMemberVoted(member_id: string) {
+  //   // TODO: maybe check if we need an async?
+  //   const currentQuestion = await this.getMostRecentQuestion();
 
-    const parsedQuestion = currentQuestion as RowDataPacket[];
+  //   const parsedQuestion = currentQuestion as RowDataPacket[];
 
-    // if there is not a currentQuestion Return Blank
-    if (!parsedQuestion) {
-      return [];
-    }
+  //   // if there is not a currentQuestion Return Blank
+  //   if (!parsedQuestion) {
+  //     return [];
+  //   }
 
-    // with the currentQuestion check based on the uuid, check if we have
-    const SELECT = "SELECT * FROM VoteHistory ";
-    const WHERE = "WHERE vote_id = ? AND member_id = ?";
-    const totalQuery = SELECT + WHERE;
+  //   // with the currentQuestion check based on the uuid, check if we have
+  //   const SELECT = "SELECT * FROM VoteHistory ";
+  //   const WHERE = "WHERE vote_id = ? AND member_id = ?";
+  //   const totalQuery = SELECT + WHERE;
 
-    const data = [parsedQuestion[0].uuid, member_id];
-    const [result] = await pool.query(totalQuery, data);
+  //   const data = [parsedQuestion[0].uuid, member_id];
+  //   const [result] = await pool.query(totalQuery, data);
 
-    // if we found a corresponding vote for this question, show that no vote is available;
-    if (!isEmpty(result)) {
-      return [];
-    }
+  //   // if we found a corresponding vote for this question, show that no vote is available;
+  //   if (!isEmpty(result)) {
+  //     return [];
+  //   }
 
-    // else return the question
-    return parsedQuestion;
-  }
+  //   // else return the question
+  //   return parsedQuestion;
+  // }
 
-  // check if there is an Active Vote the member can vote on:
-  async getVotingHistory(queryParams: VHQuery) {
+  async getVotingHistory(primaryKeys: string[]) {
     const SELECTFROM = "SELECT * FROM VoteHistory";
-    let WHERE = "";
-    let data = [];
-
-    const validParmsToQuery = new Map([
-      ["member_id", "member_id = ?"],
-      ["vote_id", "vote_id = ?"],
-    ]);
-
-    for (let i = 0; i < Object.keys(queryParams).length; i++) {
-      const currKey = Object.keys(queryParams)[i];
-      if (validParmsToQuery.has(currKey)) {
-        if (WHERE) {
-          WHERE += " AND " + validParmsToQuery.get(currKey);
-        } else {
-          WHERE += " WHERE " + validParmsToQuery.get(currKey);
-        }
-        data.push(Object.values(queryParams)[i]);
-      }
-    }
+    let WHERE = "WHERE member_id = ? AND vote_id = ?";
 
     const totalQuery = SELECTFROM + WHERE;
-    const [result] = await pool.query(totalQuery, data);
+    const [result] = await pool.query(totalQuery, primaryKeys);
 
     return result;
   }
@@ -106,15 +100,28 @@ export class VotingController {
     }
 
     const totalString = initialQuery + initialValue;
-    // primary keys for
     const [result] = await pool.query(totalString, values);
-    // subsequent query to get the item back
-    const query = {
-      member_id: vote.member_id,
-      vote_id: vote.vote_id,
-    };
+    // subsequent query to get the item back (primary keys)
+    const query = [vote.member_id, vote.vote_id];
 
     const postedVote = this.getVotingHistory(query);
     return postedVote;
   }
 }
+
+// const validParmsToQuery = new Map([
+//   ["member_id", "member_id = ?"],
+//   ["vote_id", "vote_id = ?"],
+// ]);
+
+// for (let i = 0; i < Object.keys(queryParams).length; i++) {
+//   const currKey = Object.keys(queryParams)[i];
+//   if (validParmsToQuery.has(currKey)) {
+//     if (WHERE) {
+//       WHERE += " AND " + validParmsToQuery.get(currKey);
+//     } else {
+//       WHERE += " WHERE " + validParmsToQuery.get(currKey);
+//     }
+//     data.push(Object.values(queryParams)[i]);
+//   }
+// }
