@@ -17,7 +17,7 @@ const auth = async (req: VercelRequest, res: VercelResponse) => {
       res.status(500).json({ message: "JWT Key Error" });
       return;
     }
-    if (member.last_name !== req.query.password) {
+    if (member.lastName !== req.query.password) {
       res.status(400).json({ message: "Incorrect Password" });
     } else {
       const token = jwt.sign({ userId: member.uuid }, secret, {
