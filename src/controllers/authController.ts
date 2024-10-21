@@ -13,16 +13,16 @@ class AuthController {
     const typedUser = MemberSchema.parse({
       uuid: member.uuid,
       nuid: member.nuid,
-      first_name: member.first_name,
-      last_name: member.last_name,
+      firstName: member.first_name,
+      lastName: member.last_name,
       email: member.email,
-      active_member: castBufferToBoolean(member.active_member),
-      voting_rights: castBufferToBoolean(member.voting_rights),
-      include_in_quorum: castBufferToBoolean(member.include_in_quorum),
-      receive_not_present_email: castBufferToBoolean(
+      activeMember: castBufferToBoolean(member.active_member),
+      votingRights: castBufferToBoolean(member.voting_rights),
+      includeInQuorum: castBufferToBoolean(member.include_in_quorum),
+      receiveNotPresentEmail: castBufferToBoolean(
         member.receive_not_present_email
       ),
-      sign_in_blocked: castBufferToBoolean(member.sign_in_blocked),
+      signInBlocked: castBufferToBoolean(member.sign_in_blocked),
     });
     return typedUser as Member;
   }
