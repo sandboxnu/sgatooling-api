@@ -8,7 +8,7 @@ import { string } from "joi";
 export const MemberSchema = z
   .object({
     //uuid still remains, and now we add in nuid field
-    uuid: z.string(),
+    id: z.string(),
     nuid: z.string(),
     firstName: z.string(),
     lastName: z.string(),
@@ -26,7 +26,7 @@ export type Member = z.infer<typeof MemberSchema>;
 
 export const parseDataToMemberType = (data: RowDataPacket) => {
   const parsedMember = MemberSchema.parse({
-    uuid: data.uuid,
+    id: data.uuid,
     nuid: data.nuid,
     firstName: data.first_name,
     lastName: data.last_name,

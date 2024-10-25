@@ -3,15 +3,15 @@ import { Member, MemberSchema } from "../types/types";
 import { RowDataPacket } from "mysql2";
 
 class AuthController {
-  async getMember(id: string): Promise<Member> {
+  async getMember(nuid: string, lastName: string): Promise<Member> {
     const [memberInfo] = await pool.query(
-      `SELECT * FROM Member WHERE nuid = ?`,
-      [id]
+      `SELECT * FROM Member WHERE nuid = ? AND last_name = ?`,
+      [nuid, lastName]
     );
 
     const member = (memberInfo as RowDataPacket[])[0];
     const typedUser = MemberSchema.parse({
-      uuid: member.uuid,
+      id: member.uuid,
       nuid: member.nuid,
       firstName: member.first_name,
       lastName: member.last_name,
