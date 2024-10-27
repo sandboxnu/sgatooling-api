@@ -25,10 +25,10 @@ const auth = async (req: VercelRequest, res: VercelResponse) => {
     } else if (member.signInBlocked) {
       res.status(403).json({ error: "User Blocked" });
     } else {
-      const token = jwt.sign({ data: member }, secret, {
+      const token = jwt.sign({ data: member.id }, secret, {
         expiresIn: "1h",
       });
-      res.status(200).json({ auth: { jwt: token, member: member } });
+      res.status(200).json({ auth: { jwt: token } });
     }
   } catch (err) {
     console.log(err);
