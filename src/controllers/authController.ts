@@ -8,7 +8,9 @@ class AuthController {
       `SELECT * FROM Member WHERE nuid = ? AND last_name = ?`,
       [nuid, lastName]
     );
-
+    if (!(memberInfo as RowDataPacket[]).length) {
+      throw new Error("Member not found");
+    }
     const member = (memberInfo as RowDataPacket[])[0];
     const typedUser = MemberSchema.parse({
       id: member.uuid,
