@@ -2,7 +2,7 @@ import { VotingController } from "../../src/controllers/votingController";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { VotingHistorySchema } from "../../src/types/types";
 import { ZodError } from "zod";
-import allowCors from "../middleware";
+import { allowCors } from "../middleware";
 
 const voteHistoryController = new VotingController();
 

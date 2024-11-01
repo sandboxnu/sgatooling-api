@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import EventsController from "../../src/controllers/eventController";
 import { isEmpty } from "../../src/utils";
 import { ZodError } from "zod";
-import allowCors from "../middleware";
+import { allowCors } from "../middleware";
 
 const eventsController = new EventsController();
 

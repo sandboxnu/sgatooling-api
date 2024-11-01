@@ -1,9 +1,9 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { isEmpty } from "../../src/utils";
-import { z, ZodError } from "zod";
+import { ZodError } from "zod";
 import { AttendanceQuery } from "../../src/types/types";
 import AttendanceController from "../../src/controllers/attendanceController";
-import allowCors from "../middleware";
+import { allowCors } from "../middleware";
 
 const attendanceController = new AttendanceController();
 

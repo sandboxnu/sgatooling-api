@@ -1,5 +1,5 @@
 import { VotingController } from "../../src/controllers/votingController";
-import allowCors from "../middleware";
+import { allowCors } from "../middleware";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 
 const votingController = new VotingController();
