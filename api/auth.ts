@@ -3,7 +3,7 @@ import AuthController from "../src/controllers/authController";
 import dotenv from "dotenv";
 dotenv.config();
 import jwt from "jsonwebtoken";
-import allowCors from "./middleware";
+import { allowCors } from "./middleware";
 
 const secret = process.env.JWT_SECRET;
 const authController = new AuthController();

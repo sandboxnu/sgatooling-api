@@ -1,7 +1,7 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import MembersController from "../../src/controllers/memberController";
 import { z } from "zod";
-import allowCors from "../middleware";
+import { allowCors } from "../middleware";
 
 const membersController = new MembersController();
 

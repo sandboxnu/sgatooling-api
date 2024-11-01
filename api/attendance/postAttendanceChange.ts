@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import AttendanceController from "../../src/controllers/attendanceController";
 import { AttendanceReqSchema } from "../../src/types/types";
 import { z } from "zod";
-import allowCors from "../middleware";
+import { allowCors } from "../middleware";
 
 const attendanceController = new AttendanceController();
 
