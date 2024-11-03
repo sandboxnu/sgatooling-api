@@ -8,16 +8,16 @@ import { string } from "joi";
 export const MemberSchema = z
   .object({
     //uuid still remains, and now we add in nuid field
-    uuid: z.string(),
+    id: z.string(),
     nuid: z.string(),
-    first_name: z.string(),
-    last_name: z.string(),
+    firstName: z.string(),
+    lastName: z.string(),
     email: z.string(),
-    active_member: z.boolean(),
-    voting_rights: z.boolean(),
-    include_in_quorum: z.boolean(),
-    receive_not_present_email: z.boolean(),
-    sign_in_blocked: z.boolean(),
+    activeMember: z.boolean(),
+    votingRights: z.boolean(),
+    includeInQuorum: z.boolean(),
+    receiveNotPresentEmail: z.boolean(),
+    signInBlocked: z.boolean(),
   })
   //strict makes sure that these are the only valid parameters, and nothing else gets included that's rubbish
   .strict();
@@ -26,18 +26,16 @@ export type Member = z.infer<typeof MemberSchema>;
 
 export const parseDataToMemberType = (data: RowDataPacket) => {
   const parsedMember = MemberSchema.parse({
-    uuid: data.uuid,
+    id: data.uuid,
     nuid: data.nuid,
-    first_name: data.first_name,
-    last_name: data.last_name,
+    firstName: data.first_name,
+    lastName: data.last_name,
     email: data.email,
-    active_member: castBufferToBoolean(data.active_member),
-    voting_rights: castBufferToBoolean(data.voting_rights),
-    include_in_quorum: castBufferToBoolean(data.include_in_quorum),
-    receive_not_present_email: castBufferToBoolean(
-      data.receive_not_present_email
-    ),
-    sign_in_blocked: castBufferToBoolean(data.sign_in_blocked),
+    activeMember: castBufferToBoolean(data.active_member),
+    votingRights: castBufferToBoolean(data.voting_rights),
+    includeInQuorum: castBufferToBoolean(data.include_in_quorum),
+    receiveNotPresentEmail: castBufferToBoolean(data.receive_not_present_email),
+    signInBlocked: castBufferToBoolean(data.sign_in_blocked),
   });
 
   return parsedMember as Member;

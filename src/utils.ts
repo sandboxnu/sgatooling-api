@@ -1,9 +1,7 @@
-import { VercelRequest } from "@vercel/node";
 import dotenv from "dotenv";
 dotenv.config();
 import * as mysql2 from "mysql2";
 import { v4 as uuidv4 } from "uuid";
-import jwt from "jsonwebtoken";
 
 //file to export useful functions for the rest of the files/tests
 export const isEmpty = (obj: any) => {
@@ -33,17 +31,4 @@ export const createdRandomUID = (): string => {
 
 export const castBufferToBoolean = (data: any) => {
   return data.readUInt8() === 1;
-};
-
-export const verifyJWTRequest = (req: VercelRequest) => {
-  try {
-    const authHeader = req.headers.authorization;
-    const token = authHeader && authHeader.split(" ")[1];
-    if (!token || !process.env.JWT_SECRET) return false;
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    return decoded;
-  } catch (err: unknown) {
-    return err;
-  }
 };

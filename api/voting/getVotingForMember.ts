@@ -1,4 +1,4 @@
-import allowCors from "../middleware";
+import { allowCors } from "../middleware";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { VotingController } from "../../src/controllers/votingController";
 import { ZodError } from "zod";
