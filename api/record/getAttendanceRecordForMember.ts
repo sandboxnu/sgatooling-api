@@ -4,7 +4,10 @@ import { allowCors } from "../middleware";
 
 const recordController = new RecordController();
 
-const getAttendanceRecord = async (req: VercelRequest, res: VercelResponse) => {
+const getAttendanceRecordForMember = async (
+  req: VercelRequest,
+  res: VercelResponse
+) => {
   try {
     const record = await recordController.getRecordForMember(
       req.query.id as string
@@ -15,4 +18,4 @@ const getAttendanceRecord = async (req: VercelRequest, res: VercelResponse) => {
   }
 };
 
-export default allowCors(getAttendanceRecord);
+export default allowCors(getAttendanceRecordForMember);

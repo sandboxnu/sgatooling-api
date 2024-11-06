@@ -144,9 +144,9 @@ export const parseDataToAttendanceType = (data: RowDataPacket) => {
 //AttendanceRecord
 export const AttendanceRecordSchema = z
   .object({
-    person_id: z.string(),
-    event_id: z.string(),
-    attendance_status: z.string(),
+    memberId: z.string(),
+    attendanceStatus: z.string(),
+    event: EventSchema,
   })
   .strict();
 
