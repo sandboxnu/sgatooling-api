@@ -36,4 +36,4 @@ const auth = async (req: VercelRequest, res: VercelResponse) => {
   }
 };
 
-export default allowCors(auth);
+export default allowCors(auth, false);
