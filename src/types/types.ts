@@ -63,14 +63,14 @@ export type MemberGroupType = z.infer<typeof MemberGroupSchema>;
 //Events
 export const EventSchema = z
   .object({
-    uuid: z.string(),
-    event_name: z.string(),
-    start_time: z.string().optional(),
-    end_time: z.string().optional(),
-    sign_in_closed: z.boolean(),
+    id: z.string(),
+    eventName: z.string(),
+    startTime: z.date().optional(),
+    endTime: z.date().optional(),
+    signInClosed: z.boolean(),
     description: z.string(),
     location: z.string(),
-    membership_group: z
+    membershipGroup: z
       .array(z.enum(["New Senators Fall 2022", "All active"]))
       .optional(),
   })
@@ -81,14 +81,14 @@ export type Event = z.infer<typeof EventSchema>;
 export const parseDataToEventType = (data: RowDataPacket) => {
   const splitMembership = data.membership_group.split(",");
   const typedEvent = EventSchema.parse({
-    uuid: data.uuid,
-    event_name: data.event_name,
-    ...(data.start_time && { start_time: data.start_time }),
-    ...(data.end_time && { end_time: data.end_time }),
-    sign_in_closed: !!data.sign_in_closed,
+    id: data.uuid,
+    eventName: data.event_name,
+    ...(data.start_time && { startTime: new Date(data.start_time) }),
+    ...(data.end_time && { endTime: new Date(data.end_time) }),
+    signInClosed: !!data.sign_in_closed,
     description: data.description,
     location: data.location,
-    membership_group: splitMembership,
+    membershipGroup: splitMembership,
   });
   return typedEvent as Event;
 };
