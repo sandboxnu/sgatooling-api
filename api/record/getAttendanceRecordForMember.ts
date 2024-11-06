@@ -12,7 +12,7 @@ const getAttendanceRecordForMember = async (
     const record = await recordController.getRecordForMember(
       req.query.id as string
     );
-    res.status(200).json({ record: record });
+    res.status(200).json(record);
   } catch (error: unknown) {
     res.status(500).send("Database Error");
   }

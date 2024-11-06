@@ -10,7 +10,7 @@ import {
 export class RecordController {
   async getRecordForMember(id: string) {
     const [data] = await pool.query(
-      `SELECT * FROM AttendanceRecord WHERE person_id = ? JOIN Event ON AttendanceRecord.event_id = Event.uuid`,
+      `SELECT * FROM AttendanceRecord JOIN Event ON AttendanceRecord.event_id = Event.uuid WHERE person_id = ?`,
       [id]
     );
 
