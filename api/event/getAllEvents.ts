@@ -14,4 +14,4 @@ const getAllEvents = async (req: VercelRequest, res: VercelResponse) => {
   }
 };
 
-export default allowCors(getAllEvents, true);
+export default allowCors(getAllEvents);
