@@ -4,15 +4,18 @@ import { allowCors } from "../middleware";
 
 const recordController = new RecordController();
 
-const getAttendanceRecord = async (req: VercelRequest, res: VercelResponse) => {
+const getAttendanceRecordForMember = async (
+  req: VercelRequest,
+  res: VercelResponse
+) => {
   try {
     const record = await recordController.getRecordForMember(
       req.query.id as string
     );
-    res.status(200).json({ record: record });
+    res.status(200).json(record);
   } catch (error: unknown) {
     res.status(500).send("Database Error");
   }
 };
 
-export default allowCors(getAttendanceRecord);
+export default allowCors(getAttendanceRecordForMember);

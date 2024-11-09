@@ -10,23 +10,36 @@ import {
 export class RecordController {
   async getRecordForMember(id: string) {
     const [data] = await pool.query(
-      `SELECT * FROM AttendanceRecord WHERE person_id = ?`,
+      `SELECT * FROM AttendanceRecord JOIN Event ON AttendanceRecord.event_id = Event.uuid WHERE person_id = ?`,
       [id]
     );
 
     const parsedRowData = data as RowDataPacket[];
-    const record = parsedRowData.map((record) => {
-      try {
-        const typedRecord = AttendanceRecordSchema.parse({
-          person_id: record.person_id,
-          event_id: record.event_id,
-          attendance_status: record.attendance_status,
-        });
-        return typedRecord as AttendanceRecord;
-      } catch (err) {
-        return null;
-      }
-    });
+    const record = parsedRowData
+      .map((record): AttendanceRecord | null => {
+        try {
+          const typedRecord = AttendanceRecordSchema.parse({
+            memberId: record.person_id,
+            attendanceStatus: record.attendance_status,
+            event: EventSchema.parse({
+              id: record.event_id,
+              eventName: record.event_name,
+              ...(record.start_time && {
+                startTime: new Date(record.start_time),
+              }),
+              ...(record.end_time && { endTime: new Date(record.end_time) }),
+              signInClosed: !!record.sign_in_closed,
+              description: record.description,
+              location: record.location,
+              membershipGroup: record.membership_group,
+            }),
+          });
+          return typedRecord as AttendanceRecord;
+        } catch (err) {
+          return null;
+        }
+      })
+      .filter((record) => record !== null);
 
     return record;
   }
