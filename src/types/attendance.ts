@@ -5,7 +5,7 @@ import { EventType, parseEventType } from "./event";
 const AttendanceSchema = z.object({
   memberId: z.string(),
   eventId: z.string(),
-  attendanceStatus: z.enum(["present", "absent"]),
+  attendanceStatus: z.enum(["O", "LE"]),
 });
 
 const HydratedAttendanceSchema = z
