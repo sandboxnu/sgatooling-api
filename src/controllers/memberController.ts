@@ -1,15 +1,11 @@
 import { RowDataPacket } from "mysql2";
-import { ZodError } from "zod";
-import {
-  Member,
-  MemberSchema,
-  MQueryType,
-  MemberGroupSchema,
-  MemberGroupType,
-} from "../types/types";
-import { TagSchema } from "../types/types";
-import { parseDataToMemberType } from "../types/types";
 import { isEmpty, pool, createdRandomUID } from "../utils";
+import {
+  parseDataToMemberType,
+  GetMembersParamsType,
+  Member,
+} from "../types/member";
+import { parseTagType } from "../types/tags";
 
 class MembersController {
   async getAllMembers() {
@@ -30,7 +26,7 @@ class MembersController {
     return Members;
   }
 
-  async getSpecificGroup(urlArgs: MQueryType) {
+  async getSpecificGroup(urlArgs: GetMembersParamsType) {
     let SELECTFROM =
       "SELECT Member.id, nuid, first_name, last_name, email, active_member, can_vote, receive_email_notifs, include_in_quorum, can_log_in FROM Member ";
     let JOIN = "";
@@ -40,7 +36,7 @@ class MembersController {
     const validParams = new Map([
       ["group", "MembershipGroup.group_name = ?"],
       ["active", "active_member"],
-      ["include-in-quorum", "include_in_quorum"],
+      ["includeInQuorum", "include_in_quorum"],
     ]);
 
     for (let index = 0; index < Object.keys(urlArgs).length; index++) {
@@ -129,7 +125,7 @@ class MembersController {
 
     const castedValue = data as RowDataPacket[];
     const Tags = castedValue.map((element) =>
-      TagSchema.parse({
+      parseTagType({
         membership_group: element.membership_group,
       })
     );

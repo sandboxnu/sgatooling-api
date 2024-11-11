@@ -1,8 +1,8 @@
 import { VotingController } from "../../src/controllers/votingController";
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import { VotingHistorySchema } from "../../src/types/types";
 import { ZodError } from "zod";
 import { allowCors } from "../middleware";
+import { parseVote } from "../../src/types/voting";
 
 const voteHistoryController = new VotingController();
 
@@ -11,7 +11,7 @@ const postAttendanceChange = async (
   res: VercelResponse
 ) => {
   try {
-    const parsed = VotingHistorySchema.parse(req.body);
+    const parsed = parseVote(req.body);
     const vote = await voteHistoryController.createVote(parsed);
     res.status(201).json({ vote });
   } catch (error) {
