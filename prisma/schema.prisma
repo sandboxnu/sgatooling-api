@@ -1,15 +1,116 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "mysql"
   url      = env("DATABASE_URL")
 }
 
+model AttendanceChangeRequest {
+  uuid           String @id @db.Char(32)
+  name           String? @db.Text
+  time_submitted String? @db.VarChar(255)
+  date_of_change String? @db.VarChar(255)
+  type           String? @db.VarChar(255)
+  change_status  String? @db.VarChar(255)
+  reason         String? @db.Text
+  time_arriving  String? @db.VarChar(255)
+  time_leaving   String? @db.VarChar(255)
+  event_id       String? @db.TinyText
+  member_id      String? @db.TinyText
+  
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model AttendanceRecord {
+  person_id         String @db.Char(32)
+  event_id          String @db.Char(32)
+  attendance_status String? @db.VarChar(255)
+
+  @@id([person_id, event_id])
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model Configuration {
+  admin_password_prefix String? @db.VarChar(255)
+  email_from            String? @db.VarChar(255)
+  email_sender_name     String? @db.Text
+  email_credentials     String? @db.Text
+
+  @@ignore
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model EmailConfiguration {
+  email_name String? @db.VarChar(255)
+  subject    String? @db.Text
+  body       String? @db.Text
+
+  @@ignore
+}
+
+model Event {
+  uuid           String @id @db.Char(32)
+  event_name     String? @db.Text
+  start_time     String? @db.TinyText
+  end_time       String? @db.TinyText
+  sign_in_closed Int?    @db.TinyInt
+  description    String? @db.Text
+  location       String? @db.Text
+}
+
+
+model GroupExpectedAtEvent {
+  event_id         String @id @db.Char(32)
+  membership_group String? @db.TinyText
+}
+
+model Member {
+  uuid                      String @id @db.Char(32)
+  first_name                String?  @db.VarChar(255)
+  last_name                 String?  @db.VarChar(255)
+  email                     String?  @db.VarChar(255)
+  encodings                 Bytes?   @db.MediumBlob
+  active_member             Boolean? @db.Bit(1)
+  voting_rights             Boolean? @db.Bit(1)
+  receive_not_present_email Boolean? @db.Bit(1)
+  include_in_quorum         Boolean? @db.Bit(1)
+  sign_in_blocked           Boolean? @db.Bit(1)
+  nuid                      String?  @db.TinyText
+}
+
+
+model MemberGroup {
+  person_id        String @id @db.Char(32)
+  membership_group String? @db.TinyText
+}
+
+
+model Report {
+  uuid               String @id @db.Char(32)
+  person_uuid        String @db.Char(32)
+  reported_time      String? @db.VarChar(255)
+  report_reason      String? @db.VarChar(255)
+  report_description String? @db.Text
+  event_id           String @db.Char(32)
+  request_id         String @db.Char(32)
+  resolution_time    String? @db.VarChar(255)
+  resolution_action  String? @db.VarChar(255)
+}
+
+model VoteHistory {
+  member_id      String  @db.VarChar(32)
+  vote_id        String  @db.VarChar(32)
+  vote_selection String? @db.Char(1)
+
+  @@id([member_id, vote_id])
+}
+
+model VoteQuestion {
+  uuid        String  @id @db.VarChar(32)
+  question    String? @db.Text
+  description String? @db.Text
+  time_start  String? @db.VarChar(255)
+  time_end    String? @db.VarChar(255)
+}

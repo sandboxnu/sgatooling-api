@@ -3,6 +3,7 @@ import { RowDataPacket } from "mysql2";
 import { AttendanceS } from "../types/types";
 import { AQueryType, parseDataToAttendanceType } from "../types/types";
 import { pool, createdRandomUID } from "../utils";
+import { PrismaClient } from '@prisma/client'
 
 class AttendanceController {
   async getAllAttendanceChanges() {

@@ -1,7 +1,6 @@
 import { pool, castBufferToBoolean } from "../utils";
 import { Member, MemberSchema } from "../types/types";
 import { RowDataPacket } from "mysql2";
-import { PrismaClient } from "@prisma/client";
 
 class AuthController {
   async getMember(nuid: string, lastName: string): Promise<Member> {
