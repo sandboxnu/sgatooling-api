@@ -7,7 +7,12 @@ export const AttendanceChangeRequestSchema = z.object({
   name: z.string(),
   timeSubmitted: z.string(),
   dateOfChange: z.string(),
-  type: z.enum(["absent", "arriving late", "leaving early"]),
+  type: z.enum([
+    "absent",
+    "arriving late",
+    "leaving early",
+    "arriving late, leaving early",
+  ]),
   changeStatus: z.string(),
   reason: z.string(),
   timeArriving: z.string().optional(),
@@ -15,6 +20,13 @@ export const AttendanceChangeRequestSchema = z.object({
   eventId: z.string(),
   memberId: z.string(),
 });
+
+//datetime type may be incorrect/annoying can change later
+export const AttendanceChangeRequestCreateSchema =
+  AttendanceChangeRequestSchema.partial({
+    id: true,
+    changeStatus: true,
+  });
 
 export const parseDataToAttendanceChangeType = (data: RowDataPacket) => {
   const typedAttendance = AttendanceChangeRequestSchema.parse({
@@ -36,4 +48,8 @@ export const parseDataToAttendanceChangeType = (data: RowDataPacket) => {
 
 export type AttendanceChangeRequest = z.infer<
   typeof AttendanceChangeRequestSchema
+>;
+
+export type AttendanceChangeCreate = z.infer<
+  typeof AttendanceChangeRequestCreateSchema
 >;

@@ -3,7 +3,7 @@ import { createdRandomUID, pool } from "../utils";
 import { AttendanceQueryType } from "../types/attendance";
 import {
   parseDataToAttendanceChangeType,
-  AttendanceChangeRequest,
+  AttendanceChangeCreate,
 } from "../types/attendanceChange";
 
 class AttendanceChangeController {
@@ -88,32 +88,16 @@ class AttendanceChangeController {
     return AttendanceChanges;
   }
 
-  async postAttendanceChange(attendanceChangee: AttendanceChangeRequest) {
+  async postAttendanceChange(attendanceChange: AttendanceChangeCreate) {
     //generate the UUID(the API is responsible for creating this)
     const randomuuid = createdRandomUID();
     //change_status is given to be pending since its just created
-    let initialQuery =
-      "INSERT INTO AttendanceChangeRequest (uuid, change_status, ";
-    let initialValue = " Values (?, ?, ";
-
-    const keys = Object.keys(attendanceChangee);
-    for (let index = 0; index < keys.length; index++) {
-      const item = keys[index];
-      //unless we are at the last index:
-      if (index !== keys.length - 1) {
-        initialQuery += item + ", ";
-        initialValue += "?, ";
-      } else {
-        initialQuery += item + ")";
-        initialValue += "?)";
-      }
-    }
-
-    const totalString = initialQuery + initialValue;
-    const newValues = [randomuuid, "pending"].concat(
-      Object.values(attendanceChangee)
+    let query =
+      "INSERT INTO AttendanceChangeRequest (uuid, change_status, name, time_submitted, date_of_change, type, reason, time_arriving, time_leaving, event_id, member_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    const values = [randomuuid, "pending"].concat(
+      Object.values(attendanceChange)
     );
-    await pool.query(totalString, newValues);
+    await pool.query(query, values);
 
     //subsequent query to get the information of the item we just inserted
     const insertedAttendanceChange = this.getAttendanceChange(randomuuid);

@@ -2,7 +2,7 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import { z } from "zod";
 import { allowCors } from "../middleware";
 import AttendanceChangeController from "../../src/controllers/attendanceChangeController";
-import { AttendanceChangeRequestSchema } from "../../src/types/attendanceChange";
+import { AttendanceChangeRequestCreateSchema } from "../../src/types/attendanceChange";
 
 const attendanceChangeController = new AttendanceChangeController();
 
@@ -11,7 +11,7 @@ const postAttendanceChange = async (
   res: VercelResponse
 ) => {
   try {
-    const result = AttendanceChangeRequestSchema.parse(req.body);
+    const result = AttendanceChangeRequestCreateSchema.parse(req.body);
     const newAttendanceChange =
       await attendanceChangeController.postAttendanceChange(result);
     res.status(201).json({ attendanceChange: newAttendanceChange });
