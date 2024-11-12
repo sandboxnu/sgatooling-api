@@ -1,8 +1,8 @@
-import { VercelRequest, VercelResponse } from '@vercel/node';
+import { VercelRequest, VercelResponse } from "@vercel/node";
 import { isEmpty } from "../../src/utils";
 import MembersController from "../../src/controllers/memberController";
-import { MemberQuery } from "../../src/types/types";
 import { z } from "zod";
+import { parseGetMemberParams } from "../../src/types/member";
 
 const membersController = new MembersController();
 
@@ -13,13 +13,13 @@ export default async (req: VercelRequest, res: VercelResponse) => {
       members = await membersController.getAllMembers();
     } else {
       //else we validate that its one of/multiple of the supported enums
-      const result = MemberQuery.parse(req.query);
+      const result = parseGetMemberParams(req.query);
       members = await membersController.getSpecificGroup(result);
     }
     //if no members found return a 404 else, send back the members
     !members
       ? res.status(404).send("Member Not Found")
-      : res.status(200).json({members:members});
+      : res.status(200).json({ members: members });
   } catch (error: unknown) {
     error instanceof z.ZodError
       ? res.status(400).send("Invalid Query Parameters")
