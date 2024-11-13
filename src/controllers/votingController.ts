@@ -1,10 +1,6 @@
 import { RowDataPacket } from "mysql2";
-import {
-  parseDataToVoteQuestion,
-  VHQuery,
-  VotingHistory,
-} from "../types/types";
 import { pool } from "../utils";
+import { parseDataToVote, VoteQueryType, VoteType } from "../types/voting";
 
 export class VotingController {
   async getAllQuestions() {
@@ -14,7 +10,7 @@ export class VotingController {
     const quesitonList = parsedData
       .map((question) => {
         try {
-          return parseDataToVoteQuestion(question);
+          return parseDataToVote(question);
         } catch (err) {
           return null;
         }
@@ -26,7 +22,7 @@ export class VotingController {
 
   // if have both vote_id/member_id => we are trying to find whether they already voted for the event
   // if we have just member_id => we want to find the members voting Records to be displayed
-  async getVotingHistory(queryParams: VHQuery) {
+  async getVotingHistory(queryParams: VoteQueryType) {
     const SELECTFROM = "SELECT * FROM VoteHistory";
     let WHERE = "";
     let data = [];
@@ -54,7 +50,7 @@ export class VotingController {
     return result;
   }
 
-  async createVote(vote: VotingHistory) {
+  async createVote(vote: VoteType) {
     const keys = Object.keys(vote);
     const values = Object.values(vote);
 

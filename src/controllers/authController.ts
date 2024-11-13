@@ -1,31 +1,26 @@
-import { pool, castBufferToBoolean } from "../utils";
-import { Member, MemberSchema } from "../types/types";
-import { RowDataPacket } from "mysql2";
+import { Member, parseDataToMemberType } from "../types/member";
+import { PrismaClient } from "@prisma/client";
 
 class AuthController {
+  private prisma: PrismaClient;
+
+  constructor() {
+    this.prisma = new PrismaClient();
+  }
+
   async getMember(nuid: string, lastName: string): Promise<Member> {
-    const [memberInfo] = await pool.query(
-      `SELECT * FROM Member WHERE nuid = ? AND last_name = ?`,
-      [nuid, lastName]
-    );
-    if (!(memberInfo as RowDataPacket[]).length) {
+    const memberInfo = await this.prisma.member.findMany({
+      where: {
+        nuid: nuid,
+        last_name: lastName,
+      }
+    })
+
+    if (!memberInfo.length) {
       throw new Error("Member not found");
     }
-    const member = (memberInfo as RowDataPacket[])[0];
-    const typedUser = MemberSchema.parse({
-      id: member.uuid,
-      nuid: member.nuid,
-      firstName: member.first_name,
-      lastName: member.last_name,
-      email: member.email,
-      activeMember: castBufferToBoolean(member.active_member),
-      votingRights: castBufferToBoolean(member.voting_rights),
-      includeInQuorum: castBufferToBoolean(member.include_in_quorum),
-      receiveNotPresentEmail: castBufferToBoolean(
-        member.receive_not_present_email
-      ),
-      signInBlocked: castBufferToBoolean(member.sign_in_blocked),
-    });
+    const member = memberInfo[0];
+    const typedUser = parseDataToMemberType(member);
     return typedUser as Member;
   }
 }

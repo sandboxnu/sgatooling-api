@@ -2,7 +2,12 @@
 // The controller has a class and method that call the repository.
 import { pool } from "../utils";
 import { RowDataPacket } from "mysql2";
-import { TagSchema, parseDataToEventType } from "../types/types";
+import {
+  EventType,
+  parseDataToEventType,
+  parseEventType,
+} from "../types/event";
+import { parseTagType } from "../types/tags";
 
 class EventsController {
   async getAllEvents() {
@@ -25,6 +30,33 @@ class EventsController {
     return Events;
   }
 
+  async getEventsForMemberRecord(id: string) {
+    const [data] = await pool.query(
+      `SELECT uuid, event_name, start_time, end_time, sign_in_closed, description, location FROM AttendanceRecord JOIN Event ON AttendanceRecord.event_id = Event.uuid where person_id = ?`,
+      [id]
+    );
+
+    const parsedRowData = data as RowDataPacket[];
+    const record = parsedRowData.map((event) => {
+      try {
+        const typedEvent = parseEventType({
+          uuid: event.uuid,
+          event_name: event.event_name,
+          ...(event.start_time && { start_time: event.start_time }),
+          ...(event.end_time && { end_time: event.end_time }),
+          sign_in_closed: !!event.sign_in_closed,
+          description: event.description,
+          location: event.location,
+        });
+        return typedEvent as EventType;
+      } catch (err) {
+        return null;
+      }
+    });
+
+    return record;
+  }
+
   async getEvent(id: string) {
     const [data] = await pool.query(`SELECT * FROM Event WHERE uuid = ?`, [id]);
     const parsedRowData = (data as RowDataPacket)[0];
@@ -37,7 +69,7 @@ class EventsController {
     const parsedTags = eventTags as RowDataPacket[];
 
     const Tags = parsedTags.map((tag) =>
-      TagSchema.parse({
+      parseTagType({
         membership_group: tag.membership_group,
       })
     );

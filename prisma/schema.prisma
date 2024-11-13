@@ -25,6 +25,7 @@ model AttendanceChangeRequest {
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model AttendanceRecord {
   person_id         String @db.Char(32)
+  event             Event @relation(fields: [event_id], references: [uuid])
   event_id          String @db.Char(32)
   attendance_status String? @db.VarChar(255)
 
@@ -58,6 +59,8 @@ model Event {
   sign_in_closed Int?    @db.TinyInt
   description    String? @db.Text
   location       String? @db.Text
+
+  AttendanceRecord AttendanceRecord[]
 }
 
 
