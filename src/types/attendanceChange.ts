@@ -1,5 +1,5 @@
-import { RowDataPacket } from "mysql2";
 import { z } from "zod";
+import { AttendanceChangeRequest as PrismaAttendanceChangeRequest } from '@prisma/client';
 
 //datetime type may be incorrect/annoying can change later
 export const AttendanceChangeRequestSchema = z.object({
@@ -28,7 +28,7 @@ export const AttendanceChangeRequestCreateSchema =
     changeStatus: true,
   });
 
-export const parseDataToAttendanceChangeType = (data: RowDataPacket) => {
+export const parseDataToAttendanceChangeType = (data: PrismaAttendanceChangeRequest) => {
   const typedAttendance = AttendanceChangeRequestSchema.parse({
     id: data.uuid,
     name: data.name,
