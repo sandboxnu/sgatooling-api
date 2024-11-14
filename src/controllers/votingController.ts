@@ -1,55 +1,51 @@
 import { RowDataPacket } from "mysql2";
-import {
-  parseDataToVoteQuestion,
-  VHQuery,
-  VotingHistory,
-} from "../types/types";
+import { parseDataToVoteQuestion, VotingHistory } from "../types/types";
 import { pool } from "../utils";
 
+// I have the question
+// have the questionId:
+
 export class VotingController {
-  async getAllQuestions() {
-    const [data] = await pool.query(`SELECT * from VoteQuestion`);
+  // gets back the question for a user to be able to vote on
+  async getValidQuestionForUser(member_id: string) {
+    // select question with inner query to make sure the matching question id does
+    // not exist in the history log
+    const SELECT_FROM =
+      "SELECT vq.uuid, vq.question, vq.description FROM VoteQuestion vq";
+    const WHERE =
+      " WHERE vq.time_start < NOW() AND vq.time_end > NOW() AND NOT EXISTS (";
+    const innerQuery =
+      "SELECT * FROM VoteHistory vh WHERE vq.uuid = vh.vote_id AND member_id = ? )";
 
-    const parsedData = data as RowDataPacket[];
-    const quesitonList = parsedData
-      .map((question) => {
-        try {
-          return parseDataToVoteQuestion(question);
-        } catch (err) {
-          return null;
-        }
-      })
-      .filter(Boolean);
+    const totalQuery = SELECT_FROM + WHERE + innerQuery;
+    const [result] = await pool.query(totalQuery, [member_id]);
 
-    return quesitonList;
+    // This is essentially optional
+    // (either returns back the question valid to vote on or an empty data) or nothing
+    return result;
   }
 
-  // if have both vote_id/member_id => we are trying to find whether they already voted for the event
-  // if we have just member_id => we want to find the members voting Records to be displayed
-  async getVotingHistory(queryParams: VHQuery) {
-    const SELECTFROM = "SELECT * FROM VoteHistory";
-    let WHERE = "";
-    let data = [];
+  async getVostingHistoryForUser(member_id: string) {
+    const SELECT = "SELECT question, vote_selection";
+    const FROM =
+      " FROM VoteQuestion JOIN VoteHistory ON VoteQuestion.uuid = VoteHistory.vote_id";
+    const WHERE = " WHERE member_id = ?";
 
-    const validParmsToQuery = new Map([
-      ["member_id", "member_id = ?"],
-      ["vote_id", "vote_id = ?"],
-    ]);
+    const fullQuery = SELECT + FROM + WHERE;
+    const [result] = await pool.query(fullQuery, [member_id]);
 
-    for (let i = 0; i < Object.keys(queryParams).length; i++) {
-      const currKey = Object.keys(queryParams)[i];
-      if (validParmsToQuery.has(currKey)) {
-        if (WHERE) {
-          WHERE += " AND " + validParmsToQuery.get(currKey);
-        } else {
-          WHERE += " WHERE " + validParmsToQuery.get(currKey);
-        }
-        data.push(Object.values(queryParams)[i]);
-      }
-    }
+    return result;
+  }
 
-    const totalQuery = SELECTFROM + WHERE;
-    const [result] = await pool.query(totalQuery, data);
+  // internal function to fetch data back from a created vote:
+  async getVotingHistory(vote_data: string[]) {
+    const SELECT_FROM = "SELECT * FROM VoteHistory ";
+    const WHERE = "WHERE member_id = ? AND vote_id = ?";
+
+    const totalQuery = SELECT_FROM + WHERE;
+    const [result] = await pool.query(totalQuery, vote_data);
+
+    // TODO: parsing on this back
 
     return result;
   }
@@ -74,15 +70,12 @@ export class VotingController {
     }
 
     const totalString = initialQuery + initialValue;
-    // primary keys for
     const [result] = await pool.query(totalString, values);
-    // subsequent query to get the item back
-    const query = {
-      member_id: vote.member_id,
-      vote_id: vote.vote_id,
-    };
 
-    const postedVote = this.getVotingHistory(query);
+    // subsequent query to get the item back
+    const vote_data = [vote.member_id, vote.vote_id];
+
+    const postedVote = this.getVotingHistory(vote_data);
     return postedVote;
   }
 }

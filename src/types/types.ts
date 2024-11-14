@@ -172,8 +172,8 @@ export const VotingQuestionSchema = z
     uuid: z.string(),
     question: z.string(),
     description: z.string().optional(),
-    time_start: z.string(),
-    time_end: z.string(),
+    time_start: z.date(),
+    time_end: z.date(),
   })
   .strict();
 
@@ -181,22 +181,13 @@ export type VotingHistory = z.infer<typeof VotingHistorySchema>;
 
 export type VotingQuestion = z.infer<typeof VotingQuestionSchema>;
 
-export const VoteHistoryQuerySchema = z
-  .object({
-    member_id: z.string(),
-    vote_id: z.string().optional(),
-  })
-  .strict();
-
-export type VHQuery = z.infer<typeof VoteHistoryQuerySchema>;
-
 export const parseDataToVoteQuestion = (data: RowDataPacket) => {
   const typedQuestion = VotingQuestionSchema.parse({
     uuid: data.uuid,
     question: data.question,
     ...(data.description && { description: data.description }),
-    time_start: data.time_start,
-    time_end: data.time_end,
+    time_start: new Date(data.time_start),
+    time_end: new Date(data.time_end),
   });
 
   return typedQuestion as VotingQuestion;

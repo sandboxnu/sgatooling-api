@@ -6,14 +6,11 @@ import { allowCors } from "../middleware";
 
 const voteHistoryController = new VotingController();
 
-const postAttendanceChange = async (
-  req: VercelRequest,
-  res: VercelResponse
-) => {
+const createVote = async (req: VercelRequest, res: VercelResponse) => {
   try {
     const parsed = VotingHistorySchema.parse(req.body);
     const vote = await voteHistoryController.createVote(parsed);
-    res.status(201).json({ vote });
+    res.status(200).json(vote);
   } catch (error) {
     error instanceof ZodError
       ? res.status(400).send("Invalid Input")
@@ -21,4 +18,4 @@ const postAttendanceChange = async (
   }
 };
 
-export default allowCors(postAttendanceChange);
+export default allowCors(createVote);

@@ -2,15 +2,15 @@ import { allowCors } from "../middleware";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { VotingController } from "../../src/controllers/votingController";
 import { ZodError } from "zod";
-import { VoteHistoryQuerySchema } from "../../src/types/types";
 
 const votingController = new VotingController();
 
-const getVotingForMember = async (req: VercelRequest, res: VercelResponse) => {
+const getIfMemberVoted = async (req: VercelRequest, res: VercelResponse) => {
   try {
-    const result = VoteHistoryQuerySchema.parse(req.query);
-    const potentialVote = await votingController.getVotingHistory(result);
-    res.status(200).json(potentialVote);
+    const question = await votingController.getValidQuestionForUser(
+      req.query.id as string
+    );
+    res.status(200).json(question);
   } catch (error: unknown) {
     error instanceof ZodError
       ? res.status(400).send("Invalid Input")
@@ -18,4 +18,4 @@ const getVotingForMember = async (req: VercelRequest, res: VercelResponse) => {
   }
 };
 
-export default allowCors(getVotingForMember);
+export default allowCors(getIfMemberVoted);
