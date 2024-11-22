@@ -1,5 +1,5 @@
 import { PrismaClient } from "@prisma/client";
-import { VHQuery, VotingHistory } from "../types/types";
+import { VoteType, VotingQuestionType,VoteQueryType } from "../types/voting";
 export class PrismaVotingController {
   private prisma: PrismaClient;
 
@@ -8,16 +8,23 @@ export class PrismaVotingController {
   }
 
   async getAllQuestions() {
-    return await this.prisma.voteQuestion.findMany();
+    const questions = await this.prisma.voteQuestion.findMany();
+    return questions.map(question => ({
+      uuid: question.uuid,
+      question: question.question ?? '',
+      description: question.description ?? '',
+      time_start: question.time_start ?? '',
+      time_end: question.time_end ?? ''
+    }));
   }
 
-  async getVotingHistory(queryParams: VHQuery) {
+  async getVotingHistory(queryParams: VoteQueryType) {
     return await this.prisma.voteHistory.findMany({
       where: queryParams,
     });
   }
 
-  async createVote(vote: VotingHistory) {
+  async createVote(vote: VoteType) {
     return await this.prisma.voteHistory.create({
       data: vote,
     });
