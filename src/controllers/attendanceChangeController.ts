@@ -14,19 +14,7 @@ class AttendanceChangeController {
   }
 
   async getAllAttendanceChanges() {
-    const parsedData = await this.prisma.attendanceChangeRequest.findMany();
-
-    const AttendanceChanges = parsedData
-      .map((attendance) => {
-        try {
-          const parsedAttendance = parseDataToAttendanceChangeType(attendance);
-          return parsedAttendance;
-        } catch (err) {
-          return null;
-        }
-      })
-      .filter(Boolean);
-
+    const AttendanceChanges = await this.prisma.attendanceChangeRequest.findMany();
     return AttendanceChanges;
   }
 
@@ -42,46 +30,18 @@ class AttendanceChangeController {
   }
 
   async getSpecificAttendanceChange(urlArgs: AttendanceQueryType) {
-    let eventID = "";
-    let memberID = "";
-    let limit;
-
-    if (urlArgs.hasOwnProperty("eventId")) {
-      eventID += urlArgs["eventId"];
-    }
-
-    if (urlArgs.hasOwnProperty("memberId")) {
-      memberID += urlArgs["memberId"];
-    }
-
-    if (urlArgs.hasOwnProperty("limit")) {
-      limit = parseInt(urlArgs["limit"] as string);
-    }
-
-    const result = await this.prisma.attendanceChangeRequest.findMany({
+    const AttendanceChanges = await this.prisma.attendanceChangeRequest.findMany({
       where :{
-        member_id: memberID ?? undefined,
-        event_id: eventID ?? undefined,
+        member_id: urlArgs["eventId"] ?? undefined,
+        event_id: urlArgs["memberId"] ?? undefined,
       },
-      take: limit ?? undefined
+      take: parseInt(urlArgs["limit"] as string) ?? undefined
     })
 
     // the user has no Attendance Changes
-    if (!result) {
+    if (!AttendanceChanges) {
       return [];
     }
-
-    const AttendanceChanges = result
-      .map((attendance) => {
-        try {
-          const parsedAttendance = parseDataToAttendanceChangeType(attendance);
-          return parsedAttendance;
-        } catch (err) {
-          return null;
-        }
-      })
-      .filter(Boolean);
-
     return AttendanceChanges;
   }
 

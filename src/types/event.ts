@@ -1,4 +1,3 @@
-import { RowDataPacket } from "mysql2";
 import { z } from "zod";
 
 const EventSchema = z
@@ -16,7 +15,7 @@ const EventSchema = z
   })
   .strict();
 
-export const parseDataToEventType = (data: RowDataPacket) => {
+export const parseDataToEventType = (data: any) => {
   const splitMembership = data.membership_group.split(",");
   const typedEvent = EventSchema.parse({
     id: data.uuid,

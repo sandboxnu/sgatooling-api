@@ -61,10 +61,12 @@ model Event {
   location       String? @db.Text
 
   AttendanceRecord AttendanceRecord[]
+  GroupExpectedAtEvent GroupExpectedAtEvent[]
 }
 
 
 model GroupExpectedAtEvent {
+  event            Event @relation(fields: [event_id], references: [uuid])
   event_id         String @id @db.Char(32)
   membership_group String? @db.TinyText
 }
