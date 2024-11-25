@@ -1,30 +1,46 @@
-import { pool } from "../utils";
-import { RowDataPacket } from "mysql2";
-import { EventType, parseEventType } from "../types/event";
-import {
-  HydratedAttendanceType,
-  parseDataToHydratedAttendanceType,
-} from "../types/attendance";
+import { PrismaClient } from "@prisma/client";
 
 export class RecordController {
+  private prisma: PrismaClient;
+
+  constructor() {
+    this.prisma = new PrismaClient();
+  }
+
+  //would not have this if we just had event as an attribute (very easy with prisma)  :(
   async getRecordForMember(id: string) {
-    const [data] = await pool.query(
-      `SELECT * FROM AttendanceRecord JOIN Event ON AttendanceRecord.event_id = Event.uuid WHERE person_id = ?`,
-      [id]
-    );
+    const records = await this.prisma.attendanceRecord.findMany({
+      where: {
+        person_id: id,
+      },
+    });
 
-    const parsedRowData = data as RowDataPacket[];
-    const record = parsedRowData
-      .map((record): HydratedAttendanceType | null => {
-        try {
-          const typedRecord = parseDataToHydratedAttendanceType(record);
-          return typedRecord as HydratedAttendanceType;
-        } catch (err) {
-          return null;
-        }
-      })
-      .filter((record) => record !== null);
+    const evenIids = records.map((record) => record.event_id);
+    const events = await this.prisma.event.findMany({
+      where: {
+        uuid: { in: evenIids },
+      },
+    });
 
-    return record;
+    return records.map((record) => ({
+      ...record,
+      event: events.find((event) => event.uuid === record.event_id),
+    }));
+  }
+
+  async getEventsForMemberRecord(id: string) {
+    const records = await this.prisma.attendanceRecord.findMany({
+      where: {
+        person_id: id,
+      },
+    });
+
+    const eventIds = records.map((record) => record.event_id);
+    const events = await this.prisma.attendanceRecord.findMany({
+      where: {
+        event_id: { in: eventIds },
+      },
+    });
+    return events;
   }
 }

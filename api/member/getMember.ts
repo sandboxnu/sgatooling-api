@@ -1,9 +1,10 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import MembersController from "../../src/controllers/memberController";
 import { z } from "zod";
 import { allowCors } from "../middleware";
+import { PrismaMemberController } from "../../src/controllers/prismaMemberController";
+import { MemberController } from "../../src/controllers/memberController";
 
-const membersController = new MembersController();
+const membersController = new MemberController();
 
 const getMember = async function (req: VercelRequest, res: VercelResponse) {
   try {

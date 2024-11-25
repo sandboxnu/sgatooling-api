@@ -1,10 +1,10 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { isEmpty } from "../../src/utils";
-import MembersController from "../../src/controllers/memberController";
 import { z } from "zod";
 import { parseGetMemberParams } from "../../src/types/member";
+import { MemberController } from "../../src/controllers/memberController";
 
-const membersController = new MembersController();
+const membersController = new MemberController();
 
 export default async (req: VercelRequest, res: VercelResponse) => {
   let members;
