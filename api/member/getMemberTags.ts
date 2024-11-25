@@ -1,8 +1,9 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
-import MembersController from "../../src/controllers/memberController";
+import { MemberController } from "../../src/controllers/memberController";
 import { allowCors } from "../middleware";
+import { PrismaMemberController } from "../../src/controllers/prismaMemberController";
 
-const membersController = new MembersController();
+const membersController = new MemberController();
 
 const getMemberTags = async function (req: VercelRequest, res: VercelResponse) {
   try {

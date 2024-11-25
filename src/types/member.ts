@@ -14,6 +14,7 @@ const MemberSchema = z
     includeInQuorum: z.boolean(),
     receiveNotPresentEmail: z.boolean(),
     signInBlocked: z.boolean(),
+    group_id: z.string(),
   })
   .strict();
 
@@ -25,8 +26,8 @@ const MemberGroupSchema = z.object({
 const GetMembersParams = z
   .object({
     group: z.string().optional(),
-    active: z.string().optional(),
-    includeInQuorum: z.string().optional(),
+    active: z.boolean().optional(),
+    includeInQuorum: z.boolean().optional(),
   })
   .strict();
 

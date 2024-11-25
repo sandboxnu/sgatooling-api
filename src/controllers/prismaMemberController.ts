@@ -8,7 +8,7 @@ import {
 import { parseTagType } from "../types/tags";
 import { PrismaClient } from "@prisma/client";
 
-export class MemberController {
+export class PrismaMemberController {
   private prisma: PrismaClient;
   constructor() {
     this.prisma = new PrismaClient();
