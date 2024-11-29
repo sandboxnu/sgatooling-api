@@ -1,7 +1,6 @@
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { z } from "zod";
 import { allowCors } from "../middleware";
-import { PrismaMemberController } from "../../src/controllers/prismaMemberController";
 import { MemberController } from "../../src/controllers/memberController";
 
 const membersController = new MemberController();

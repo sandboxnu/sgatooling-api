@@ -30,15 +30,14 @@ export class PrismaMemberController {
     }));
   }
 
+
   async getSpecificGroup(urlArgs: GetMembersParamsType) {
     return await this.prisma.member.findMany({
+      include: {
+        group_id: true
+      },
       where: {
         //group_id: urlArgs.group,
-        group_id: {
-          some: {
-            group_id: urlArgs.group,
-          },
-        },
         active_member: urlArgs.active,
         include_in_quorum: urlArgs.includeInQuorum,
       },
@@ -73,7 +72,7 @@ export class PrismaMemberController {
   async getMemberTags(id: string) {
     const data = await this.prisma.memberGroup.findMany({
       where: {
-        group_id: id,
+        person_id: id,
       },
       select: {
         membership_group: true,

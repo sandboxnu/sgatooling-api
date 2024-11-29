@@ -83,13 +83,13 @@ model Member {
   include_in_quorum         Boolean? @db.Bit(1)
   sign_in_blocked           Boolean? @db.Bit(1)
   nuid                      String?  @db.TinyText
-  group_id                  MemberGroup[]
+  group_id                  MemberGroup @relation(fields: [uuid], references: [person_id])
 }
 
 
 model MemberGroup {
-  person Member @relation(fields: [group_id], references: [uuid])
-  group_id String @id @db.Char(32)
+  person Member[]
+  person_id String @id @db.Char(32)
   membership_group String? @db.TinyText
 }
 
