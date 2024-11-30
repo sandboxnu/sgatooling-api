@@ -5,7 +5,7 @@ import { ZodError } from "zod";
 import { parseVoteQuery } from "../../src/types/voting";
 import { PrismaVotingController } from "../../src/controllers/prismaVotingController";
 
-const votingController = new PrismaVotingController();
+const votingController = new VotingController();
 
 const getVotingForMember = async (req: VercelRequest, res: VercelResponse) => {
   try {

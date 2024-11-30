@@ -1,9 +1,8 @@
 import { VotingController } from "../../src/controllers/votingController";
-import { PrismaVotingController } from "../../src/controllers/prismaVotingController";
 import { allowCors } from "../middleware";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 
-const votingController = new PrismaVotingController();
+const votingController = new VotingController();
 
 const getAllQuestions = async (req: VercelRequest, res: VercelResponse) => {
   try {

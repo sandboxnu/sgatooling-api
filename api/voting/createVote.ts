@@ -1,11 +1,10 @@
 import { VotingController } from "../../src/controllers/votingController";
-import { PrismaVotingController } from "../../src/controllers/prismaVotingController";
 import { VercelRequest, VercelResponse } from "@vercel/node";
 import { ZodError } from "zod";
 import { allowCors } from "../middleware";
 import { parseVote } from "../../src/types/voting";
 
-const voteHistoryController = new PrismaVotingController();
+const voteHistoryController = new VotingController();
 
 const postAttendanceChange = async (
   req: VercelRequest,
