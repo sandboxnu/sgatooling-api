@@ -19,13 +19,12 @@ class AttendanceChangeController {
   }
 
   async getAttendanceChange(id: string) {
-    const data = await this.prisma.attendanceChangeRequest.findMany({
+    const AttendanceChange = await this.prisma.attendanceChangeRequest.findUnique({
       where: {
         uuid: id
       }
     })
 
-    const AttendanceChange = parseDataToAttendanceChangeType(data[0]);
     return AttendanceChange;
   }
 
