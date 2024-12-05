@@ -30,11 +30,10 @@ class EventsController {
         },
       },
     });
-    const groupConcatEvents = events.map((event) => ({
+    return events.map((event) => ({
       ...event,
-      membership_group: event.GroupExpectedAtEvent.map((group) => group.membership_group),
+      membership_group: event.GroupExpectedAtEvent.map((group) => parseTagType(group)),
     }));
-    return groupConcatEvents;
   }
 
   async getEventsForMemberRecord(id: string) {

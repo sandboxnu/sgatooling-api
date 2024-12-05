@@ -10,7 +10,7 @@ const getAllEvents = async (req: VercelRequest, res: VercelResponse) => {
     const eventsList = await eventsController.getAllEvents();
     res.status(200).json(eventsList);
   } catch (err: unknown) {
-    res.status(500).send("Database Error");
+    res.status(500).send(err);
   }
 };
 
