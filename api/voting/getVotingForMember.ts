@@ -3,7 +3,6 @@ import { VercelRequest, VercelResponse } from "@vercel/node";
 import { VotingController } from "../../src/controllers/votingController";
 import { ZodError } from "zod";
 import { parseVoteQuery } from "../../src/types/voting";
-import { PrismaVotingController } from "../../src/controllers/prismaVotingController";
 
 const votingController = new VotingController();
 
